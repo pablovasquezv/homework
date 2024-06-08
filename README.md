@@ -1,7 +1,7 @@
-# Creación de Portfolio-Website
+# Proyecto de Angular y Spring Boot.
 
 ## Descripción
-Proyecto para la creacion de una Portafolio Virtual.
+Proyecto en Angular .
 
 ## Tecnologías utilizadas
 Lista de tecnologías pre-requisitos mínimos para que el proyecto funcione locamente:
