@@ -1,0 +1,30 @@
+  <div [ngClass]="{'w-100 percent':usePercent && !inputFormControl.invalid}">
+  <mat-form-field class="w-100" *ngIf="textMode==false">
+      <mat-label *ngIf="label!=null">{{label}}</mat-label>
+      <input [(ngModel)]="model" matInput type="number" min="{{min}}" max="{{max}}" [formControl]="inputFormControl" 
+      [errorStateMatcher]="matcher" placeholder="{{placeholder}}" (change)="handleChange()" (keypress)="inputValidator($event)"
+      step="{{step}}">
+      <mat-hint class="numeric-hint">Rango [ {{min}} , {{max}} ]</mat-hint>
+      <mat-error *ngIf="inputFormControl.hasError('min') && !inputFormControl.hasError('required')">
+        Valor debe ser mayor o igual a {{min}}
+        </mat-error>
+        <mat-error *ngIf="inputFormControl.hasError('max') && !inputFormControl.hasError('required')">
+          Valor debe ser menor o igual a {{max}}
+        </mat-error>
+      <mat-error *ngIf="inputFormControl.hasError('required')">
+        Campo <strong>requerido</strong>
+      </mat-error>
+      <mat-error *ngIf="inputFormControl.hasError('maxDecimals')">
+        Máximo de decimales {{maxDecimals}}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="w-100" *ngIf="textMode==true">
+      <mat-label *ngIf="label!=null">{{label}}</mat-label>
+    <input [(ngModel)]="model" matInput type="text" [formControl]="inputFormControl" [errorStateMatcher]="matcher"
+            placeholder="{{placeholder}}" (change)="handleChange()" (input)="inputValidator($event)">
+      <mat-error *ngIf="inputFormControl.hasError('required')">
+        Campo <strong>requerido</strong>
+      </mat-error>
+    </mat-form-field>
+    </div>

@@ -1,0 +1,190 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">Lista de Usuarios</li>
+  </ol>
+</nav>
+
+<div class="container-fluid">
+  <div class="row mt-3">
+    <div class="col-md-10 text-left">
+      <button mat-raised-button color="profile" [routerLink]="['../edit', currentUser]" [queryParams]="{username:true}">Mi Información</button>
+    </div>
+    <div class="col-md-2 text-right">
+      <button *ngIf="false" mat-raised-button color="primary" routerLink="../user-detail">Añadir persona</button>
+      <button mat-raised-button color="primary" (click)="upload()" class="ml-2">Carga masiva</button>
+      <input type="file" #fileUpload id="fileUpload" name="fileUpload" accept="*.xlsx" style="display:none;" />
+    </div>
+  </div>
+  <h2 style="margin-top: 10px;">Filtros</h2>
+  <mat-card>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-2 col-md-4">
+          <mat-form-field class="w-100">
+            <mat-label>Unidad</mat-label>
+            <mat-select (selectionChange)="changeUnidad($event)" [(ngModel)]="filtroUnidad">
+              <mat-option [value]="unit" *ngFor="let unit of unidadList">{{unit}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-4 col-md-4">
+          <mat-form-field class="w-100">
+            <mat-label>Cliente</mat-label>
+            <mat-select (selectionChange)="changeCliente($event)" [(ngModel)]="filtroCliente">
+              <mat-option [value]="client" *ngFor="let client of clienteList">{{client}}</mat-option>
+              <mat-option value="NA">No aplica</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-3 col-md-4">
+          <mat-form-field class="w-100">
+            <mat-label>Sector</mat-label>
+            <mat-select (selectionChange)="changeSector($event)" [(ngModel)]="filtroSector">
+              <mat-option [value]="sector" *ngFor="let sector of sectorList">{{sector}}</mat-option>
+              <mat-option value="NA">No aplica</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-3 col-md-4">
+          <mat-form-field class="w-100">
+            <mat-label>Proyecto</mat-label>
+            <mat-select (selectionChange)="changeProyecto($event)" [(ngModel)]="filtroProyecto">
+              <mat-option [value]="proyect" *ngFor="let proyect of proyectoList">{{proyect}}</mat-option>
+              <mat-option value="NA">No aplica</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-2 col-md-4">
+          <mat-form-field class="w-100">
+            <mat-label>Donde</mat-label>
+            <mat-select (selectionChange)="changeDonde($event)" [(ngModel)]="filtroDonde">
+              <mat-option [value]="where" *ngFor="let where of dondeList">{{where}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-2 col-md-4">
+          <mat-form-field class="w-100">
+            <mat-label>En Cuarentena</mat-label>
+            <mat-select (selectionChange)="changeCuarentena($event)" [(ngModel)]="filtroCuarentenaStr">
+              <mat-option [value]="1">Si</mat-option>
+              <mat-option [value]="2">No </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-2 col-md-4">
+          <mat-form-field class="w-100">
+            <mat-label>COVID-19</mat-label>
+            <mat-select (selectionChange)="changeCOVID19($event)" [(ngModel)]="filtroCOVID19Str">
+              <mat-option [value]="1">Positivo</mat-option>
+              <mat-option [value]="2">Negativo</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6 col-md-4 text-right">
+          <button mat-raised-button color="primary" class="mr-2" (click)="limpiar()">Limpiar</button>
+          <button mat-raised-button color="primary" type="submit" (click)="searchByFilters()">Filtrar</button>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  <div class="row mt-4">
+    <div class="col-8">
+      <mat-form-field>
+        <mat-label>Buscar</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar">
+      </mat-form-field>
+    </div>
+    <div class="col-4 text-right">
+      <button mat-raised-button color="success" (click)="exportAsXLSX()">Exportar a Excel</button>
+    </div>
+    <div class="col-md-12">
+      <div class="mat-elevation-z8">
+        <div class="table-responsive">
+          <table mat-table [dataSource]="dataSource" matSort>
+
+            <!-- Unidad -->
+            <ng-container matColumnDef="unidad">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Unidad </th>
+              <td mat-cell *matCellDef="let row"> {{row.unidad}} </td>
+            </ng-container>
+
+            <!-- Cliente -->
+            <ng-container matColumnDef="cliente">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente </th>
+              <td mat-cell *matCellDef="let row"> {{row.cliente}} </td>
+            </ng-container>
+
+            <!-- Nombre -->
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre Completo </th>
+              <td mat-cell *matCellDef="let row"> {{row.nombre}} {{row.apellido}} </td>
+            </ng-container>
+
+            <!-- N° empleado -->
+            <ng-container matColumnDef="usuario">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Usuario </th>
+              <td mat-cell *matCellDef="let row"> {{row.userName}} </td>
+            </ng-container>
+
+            <!-- N° empleado -->
+            <ng-container matColumnDef="empleado">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Nº Empleado </th>
+              <td mat-cell *matCellDef="let row"> {{row.nroEmpleado}} </td>
+            </ng-container>
+
+            <!-- Donde -->
+            <ng-container matColumnDef="donde">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Donde </th>
+              <td mat-cell *matCellDef="let row"> {{row.donde}} </td>
+            </ng-container>
+
+            <!-- Cuarentena -->
+            <ng-container matColumnDef="cuarentena">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Cuarentena </th>
+              <td mat-cell *matCellDef="let row"> {{row.cuarentena ? "Si":"No"}} </td>
+            </ng-container>
+
+            <!-- Fecha comienzo de cuarentena -->
+            <ng-container matColumnDef="comienzo">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> F. Comienzo c. </th>
+              <td mat-cell *matCellDef="let row"> {{row.inicioCuarentena | date:'dd/MM/yyyy'}} </td>
+            </ng-container>
+
+            <!-- Covid19 -->
+            <ng-container matColumnDef="covid">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> COVID-19 </th>
+              <td mat-cell *matCellDef="let row"> {{row.covid19 ? "Si":"No"}} </td>
+            </ng-container>
+
+            <!-- Fecha de diagnostico -->
+            <ng-container matColumnDef="diagnostico">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> F. Diagnóstico </th>
+              <td mat-cell *matCellDef="let row"> {{row.fechaDiagnostico | date:'dd/MM/yyyy'}} </td>
+            </ng-container>
+
+            <!-- Progress Column -->
+            <ng-container matColumnDef="opt">
+              <th mat-header-cell *matHeaderCellDef> Opciones </th>
+              <td mat-cell *matCellDef="let row">
+                <button [routerLink]="['../edit', row.nroEmpleado]" mat-icon-button>
+                  <i class="material-icons">description</i> </button>
+                <button mat-icon-button (click)="deleteHomeWork(row)">
+                  <i class="material-icons">delete</i></button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+            </tr>
+          </table>
+        </div>
+        <mat-paginator (page)="handlePaginatorEvent($event)" [pageSize]="paginatorSize"
+          [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+
+      </div>
+    </div>
+  </div>
+</div>

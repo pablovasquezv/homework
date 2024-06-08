@@ -1,0 +1,334 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="../../plan-cont">Plan de Contingencia</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Recursos claves</li>
+  </ol>
+</nav>
+
+<div class="container-fluid">
+  <h2>Datos del proyecto</h2>
+  <mat-card class="mt-3 alert alert-warning">
+    <div class="container w-100">
+      <div class="row">
+        <div class="col-md-3">
+          <mat-form-field class="w-100">
+            <mat-label>UN</mat-label>
+            <input matInput placeholder="UN" [(ngModel)]="planCont.un" value="{{planCont.un}}" disabled>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3">
+          <mat-form-field class="w-100">
+            <mat-label>Sector</mat-label>
+            <input matInput placeholder="Sector" [(ngModel)]="planCont.sector" value="{{planCont.sector}}" disabled>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3">
+          <mat-form-field class="w-100">
+            <mat-label>CE</mat-label>
+            <input matInput placeholder="CE" [(ngModel)]="planCont.ce" value="{{planCont.ce}}" disabled>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3">
+          <mat-form-field class="w-100">
+            <mat-label>Nombre Cliente</mat-label>
+            <input matInput placeholder="nomCliente" [(ngModel)]="planCont.nombreCliente"
+              value="{{planCont.nombreCliente}}" disabled>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <mat-form-field class="w-100">
+            <mat-label>Cliente Manager</mat-label>
+            <input matInput placeholder="clienteManager" [(ngModel)]="planCont.clienteManager"
+              value="{{planCont.clienteManager}}" disabled>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-3">
+          <mat-form-field class="w-100">
+            <mat-label>Gerente Proyecto</mat-label>
+            <input matInput placeholder="genProye" [(ngModel)]="planCont.gerenteProyecto"
+              value="{{planCont.gerenteProyecto}}" disabled>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-3">
+          <mat-form-field class="w-100">
+            <mat-label>Código Proyecto</mat-label>
+            <input matInput placeholder="codProy" [(ngModel)]="planCont.projectCode" value="{{planCont.projectCode}}"
+              disabled>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-3">
+          <mat-form-field class="w-100">
+            <mat-label>Nombre Proyecto</mat-label>
+            <input matInput placeholder="nomProy" [(ngModel)]="planCont.nombreProyecto"
+              value="{{planCont.nombreProyecto}}" disabled>
+          </mat-form-field>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col-3">
+          <mat-form-field class="w-100">
+            <mat-label>Plan de Contingencia</mat-label>
+            <input matInput placeholder="Plan de Contingencia" [(ngModel)]="contDocument.name"
+              value="{{contDocument.name}}" disabled>
+          </mat-form-field>
+        </div>
+        <div class="col-6 text-left">
+          <!-- carga de archivos y carga a tabla principal -->
+          <button *ngIf="!planCont.poseePlan" mat-raised-button color="primary" (click)="upload()"
+            class="ml-2">Agregar Plan</button>
+          <button *ngIf="planCont.poseePlan" mat-raised-button color="primary" (click)="upload()"
+            class="ml-2">Modificar Plan</button>
+          <input type="file" #fileUpload id="fileUpload" (change)="handleFileSelect($event)" style="display:none;"
+            accept="image/*,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.openxmlformats-officedocument.presentationml.presentation" />
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  <h2 class="mt-3">Perfiles</h2>
+  <mat-card class="mt-3">
+    <div class="row">
+      <div class="col-6">
+        <mat-form-field>
+          <mat-label>Buscar</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Buscar">
+        </mat-form-field>
+      </div>
+      <div class="col-md-12 col-sm-12">
+        <div class="w-100">
+          <div class="table-responsive">
+            <table mat-table [dataSource]="dataSource" matSort class="w-100">
+              <!-- perfilClave -->
+              <ng-container matColumnDef="perfilClave">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Perfil Clave </th>
+                <td mat-cell *matCellDef="let row"><input type="text" [(ngModel)]="row.perfilClave"
+                    value="{{row.perfilClave}}" required> </td>
+
+              </ng-container>
+
+              <!-- nombrePerfilClave -->
+              <ng-container matColumnDef="nombrePerfilClave">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre Perfil Clave </th>
+                <td mat-cell *matCellDef="let row"> <input type="text" [(ngModel)]="row.nombrePerfilClave"
+                    value="{{row.nombrePerfilClave}}" required> </td>
+              </ng-container>
+
+              <!-- nombreBackup -->
+              <ng-container matColumnDef="nombreBackup">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre de Backups </th>
+                <td mat-cell *matCellDef="let row"> <input type="text" [(ngModel)]="row.nombreBackup"
+                    value="{{row.nombreBackup}}" required></td>
+              </ng-container>
+
+              <!-- planContingencia -->
+              <ng-container matColumnDef="planContingencia">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header
+                  matTooltip="Tiene plan de contingencia / continuidad que contenga esta información? ">Posee Plan</th>
+
+                <td mat-cell *matCellDef="let row">
+                  <mat-select [(ngModel)]="row.planContingencia">
+                    <mat-option *ngFor="let r of siNoList" [value]="r.id">
+                      {{r.value}}
+                    </mat-option>
+                  </mat-select>
+                </td>
+
+              </ng-container>
+
+              <!-- backupActividades -->
+              <ng-container matColumnDef="backupActividades">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header
+                  matTooltip="El backup conoce la actividades que debe realizar? ">Conoce Actividades</th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-select [(ngModel)]="row.backupActividades">
+                    <mat-option *ngFor="let r of siNoList" [value]="r.id">
+                      {{r.value}}
+                    </mat-option>
+                  </mat-select>
+                </td>
+
+              </ng-container>
+
+              <!-- backupHerramientas -->
+              <ng-container matColumnDef="backupHerramientas">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header
+                  matTooltip="El backup conoce los repositorios, herramientas, accesos etc., que se utiliza en el proyecto? ">
+                  Conoce Herramientas</th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-select [(ngModel)]="row.backupHerramientas">
+                    <mat-option *ngFor="let r of siNoList" [value]="r.id">
+                      {{r.value}}
+                    </mat-option>
+                  </mat-select>
+                </td>
+              </ng-container>
+
+              <!-- pclaveReunionSeg -->
+              <ng-container matColumnDef="pclaveReunionSeg">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header
+                  matTooltip="Si el perfil clave es un líder, este ha participado en reunión de seguimiento? ">Participa
+                  de Seguimiento</th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-select [(ngModel)]="row.pclaveReunionSeg">
+                    <mat-option *ngFor="let r of siNoList" [value]="r.id">
+                      {{r.value}}
+                    </mat-option>
+                  </mat-select>
+                </td>
+              </ng-container>
+
+              <!-- comunicacionCliEquipo -->
+              <ng-container matColumnDef="comunicacionCliEquipo">
+                <th mat-header-cell *matHeaderCellDef
+                  matTooltip="Se consideró la comunicación del plan al cliente y al equipo?" mat-sort-header>Difusión
+                  del Plan</th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-select [(ngModel)]="row.comunicacionCliEquipo">
+                    <mat-option *ngFor="let r of siNoList" [value]="r.id">
+                      {{r.value}}
+                    </mat-option>
+                  </mat-select>
+                </td>
+              </ng-container>
+              <!-- comentarios -->
+              <ng-container matColumnDef="comentarios">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Comentarios</th>
+                <td mat-cell *matCellDef="let row"> <textarea maxlength="500" matInput
+                    [(ngModel)]="row.comentarios">{{row.comentarios}}</textarea></td>
+              </ng-container>
+
+              <ng-container matColumnDef="opt">
+                <th mat-header-cell *matHeaderCellDef> Opciones </th>
+                <td mat-cell *matCellDef="let row">
+                  <button mat-icon-button (click)="deleteDetail(row)">
+                    <i class="material-icons">delete</i></button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+              </tr>
+            </table>
+          </div>
+          <mat-paginator (page)="handlePaginatorEvent($event)" [pageSize]="paginatorSize"
+            [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+        </div>
+      </div>
+      <div class="col-md-12 col-sm-12">
+        <mat-expansion-panel #perfilPanel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>Añadir Perfil</mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          <div class="w-100">
+            <div class="row">
+              <div class="col-md-4 col-sm-4">
+                <mat-form-field class="w-100">
+                  <mat-label>Perfil Clave</mat-label>
+                  <input matInput type="text" placeholder="Perfil Clave" [(ngModel)]="newDetail.perfilClave"
+                    value="{{newDetail.perfilClave}}" required>
+                </mat-form-field>
+              </div>
+              <div class="col-md-4 col-sm-4">
+                <mat-form-field class="w-100">
+                  <mat-label>Nombre Perfil Clave</mat-label>
+                  <input matInput type="text" placeholder="Nombre Perfil Clave"
+                    [(ngModel)]="newDetail.nombrePerfilClave" value="{{newDetail.nombrePerfilClave}}" required>
+                </mat-form-field>
+              </div>
+              <div class="col-md-4 col-sm-4">
+                <mat-form-field class="w-100">
+                  <mat-label>Nombre Backup</mat-label>
+                  <input matInput type="text" placeholder="Nombre Backup" [(ngModel)]="newDetail.nombreBackup"
+                    value="{{newDetail.nombreBackup}}" required>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 col-sm-2">
+                <mat-form-field class="w-100">
+                  <mat-label>Posee Plan</mat-label>
+                  <mat-select aria-placeholder="Posee Plan" [(ngModel)]="newDetail.planContingencia" 
+                  matTooltip="Tiene plan de contingencia / continuidad que contenga esta información? ">
+                    <mat-option *ngFor="let r of siNoList" [value]="r.id">{{r.value}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <mat-form-field class="w-100">
+                  <mat-label>Conoce Actividades</mat-label>
+                  <mat-select aria-placeholder="Conoce Actividades" [(ngModel)]="newDetail.backupActividades"
+                  matTooltip="El backup conoce la actividades que debe realizar? ">
+                    <mat-option *ngFor="let r of siNoList" [value]="r.id">{{r.value}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-md-3 col-sm-3">
+                <mat-form-field class="w-100">
+                  <mat-label>Conoce Herramientas</mat-label>
+                  <mat-select aria-placeholder="Conoce Herramientas" [(ngModel)]="newDetail.backupHerramientas"
+                  matTooltip="El backup conoce los repositorios, herramientas, accesos etc., que se utiliza en el proyecto? ">
+                    <mat-option *ngFor="let r of siNoList" [value]="r.id">{{r.value}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-md-3 col-sm-3">
+                <mat-form-field class="w-100">
+                  <mat-label>Participa de Seguimientos</mat-label>
+                  <mat-select aria-placeholder="Participa de Seguimientos" [(ngModel)]="newDetail.pclaveReunionSeg"
+                  matTooltip="Si el perfil clave es un líder, este ha participado en reunión de seguimiento? ">
+                    <mat-option *ngFor="let r of siNoList" [value]="r.id">{{r.value}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-md-2 col-sm-2">
+                <mat-form-field class="w-100">
+                  <mat-label>Difusión del Plan</mat-label>
+                  <mat-select aria-placeholder="Difusión del Plan" [(ngModel)]="newDetail.comunicacionCliEquipo"
+                  matTooltip="Se consideró la comunicación del plan al cliente y al equipo?">
+                    <mat-option *ngFor="let r of siNoList" [value]="r.id">{{r.value}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 col-sm-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Comentarios</mat-label>
+                  <textarea placeholder="Comentarios" maxlength="500" matInput
+                    [(ngModel)]="newDetail.comentarios">{{newDetail.comentarios}}</textarea>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-sm-6">
+              <button mat-raised-button (click)="clean()">Limpiar</button>
+            </div>
+            <div class="col-sm-6 col-md-6 text-right">
+              <button id="btadjun" mat-raised-button (click)="agregarPerfil(perfilPanel)">Cargar</button>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </div>
+      <div class="col-md-6 col-sm-6" style="margin-top: 15px;">
+        <button mat-raised-button (click)="undoChanges()">Deshacer Cambios</button>
+      </div>
+    </div>
+  </mat-card>
+  <div class="row mt-3">
+    <div class="col-md-6 col-sm-6 col-6">
+      <button mat-raised-button routerLink="../../plan-cont">Volver</button>
+    </div>
+    <div class="col-md-6 col-sm-6 col-6 text-right">
+      <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
+    </div>
+  </div>
+</div>

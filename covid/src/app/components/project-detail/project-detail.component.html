@@ -1,0 +1,1300 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="../../project-tracking">Seguimiento de proyectos</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Detalle Proyecto</li>
+    </ol>
+</nav>
+<mat-tab-group (selectedTabChange)="tabChange($event)">
+    <mat-tab label="Detalle">
+        <br>
+        <div class="container">
+            <div class="col-12 text-right" *ngIf="projectTracking.modification">
+                Actualizado por <b>{{projectTracking.modification.username}}</b> el día <span
+                    class="italic">{{projectTracking.modification.lastModified | date : 'EEEE, d/MMMM/y, h:mm:ss a'}}</span>
+            </div>
+            <mat-expansion-panel [expanded]="true" class="alert alert-warning">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Datos del proyecto</mat-panel-title>
+                    <mat-panel-description></mat-panel-description>
+                </mat-expansion-panel-header>
+                <div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Sector</mat-label>
+                                <input matInput placeholder="Sector" [(ngModel)]="projectTracking.sector"
+                                    value="{{projectTracking.sector}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>UN</mat-label>
+                                <input matInput placeholder="UN" [(ngModel)]="projectTracking.un"
+                                    value="{{projectTracking.un}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>CE</mat-label>
+                                <input matInput placeholder="CE" [(ngModel)]="projectTracking.ce"
+                                    value="{{projectTracking.ce}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Cliente</mat-label>
+                                <input matInput placeholder="Cliente" [(ngModel)]="projectTracking.client"
+                                    value="{{projectTracking.client}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Línea servicio</mat-label>
+                                <mat-select [disabled]="disableByAttemps()"
+                                    [(ngModel)]="projectTracking.serviceLine">
+                                    <mat-option *ngFor="let pls of projectLines" [value]="pls">
+                                        {{pls}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Gerente de proyecto</mat-label>
+                                <input matInput placeholder="Gerente de proyecto"
+                                    [(ngModel)]="projectTracking.projectManager" [disabled]="isAdminProfile()==false"
+                                    value="{{projectTracking.projectManager}}">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Código de proyecto</mat-label>
+                                <input matInput placeholder="Código de proyecto"
+                                    [(ngModel)]="projectTracking.projectCode" value="{{projectTracking.projectCode}}"
+                                    disabled="true">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Nombre de proyecto</mat-label>
+                                <input matInput placeholder="Nombre de proyecto"
+                                    [(ngModel)]="projectTracking.projectName" value="{{projectTracking.projectName}}"
+                                    disabled="true">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Tipología</mat-label>
+                                <mat-select (selectionChange)="reloadType($event)"
+                                    [disabled]="disableByAttemps()"
+                                    [(ngModel)]="projectTracking.projectTypeCode">
+                                    <mat-option *ngFor="let opc of projectTypes" [value]="opc.id">
+                                        {{opc.value}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Fecha inicio proyecto</mat-label>
+                                <input matInput [matDatepicker]="startDate" [(ngModel)]="projectTracking.startDate"
+                                    disabled="true" (click)="startDate.open()">
+                                <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                                <mat-datepicker #startDate></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Fecha fin proyecto</mat-label>
+                                <input matInput [matDatepicker]="endDate" [(ngModel)]="projectTracking.endDate"
+                                    disabled="true">
+                                <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                                <mat-datepicker #endDate></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Fecha real fin proyecto</mat-label>
+                                <input [min]="projectTracking.startDate" matInput [matDatepicker]="realEndDate"
+                                    [(ngModel)]="projectTracking.realEndDate" [readonly]="true"
+                                    (click)="realEndDate.open()">
+                                <mat-datepicker-toggle matSuffix [for]="realEndDate"></mat-datepicker-toggle>
+                                <mat-datepicker #realEndDate></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <!--<div class="col-md-12 col-sm-6 col-6 text-right">
+                            <button mat-raised-button (click)="enabledInputs()"
+                                *ngIf="isAdminProfile()">{{editText}}</button>
+                        </div>-->
+                    </div>
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel class="mt-3" [ngClass]="projectTracking.extAgainstIncome == null ? 'highlight-red':''"
+                [expanded]="true" *ngIf="showContraIngresos()">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>¿ Extensión es contra ingresos ?</mat-panel-title>
+                    <mat-panel-description></mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-1 col-md-1" *ngIf="projectTracking.extAgainstIncome!=null">
+                            <mat-checkbox labelPosition="before" #yesOption (change)="setExtension(yesOption.checked)"
+                                [checked]="projectTracking.extAgainstIncome">Si</mat-checkbox>
+                        </div>
+                        <div class="col-sm-1 col-md-1" *ngIf="projectTracking.extAgainstIncome!=null">
+                            <mat-checkbox labelPosition="before" #noOption (change)="setExtension(!noOption.checked)"
+                                [checked]="!projectTracking.extAgainstIncome">No</mat-checkbox>
+                        </div>
+                        <div class="col-sm-1 col-md-1" *ngIf="projectTracking.extAgainstIncome==null">
+                            <mat-checkbox labelPosition="before" #yesOption (change)="setExtension(yesOption.checked)"
+                                [checked]="false">Si</mat-checkbox>
+                        </div>
+                        <div class="col-sm-1 col-md-1" *ngIf="projectTracking.extAgainstIncome==null">
+                            <mat-checkbox labelPosition="before" #noOption (change)="setExtension(!noOption.checked)"
+                                [checked]="true">No</mat-checkbox>
+                        </div>
+                        <div class="col-sm-8 col-md-8">
+                            <app-numeric-input *ngIf="projectTracking.extAgainstIncome==true"
+                                [textMode]="true"
+                                [(model)]="projectTracking.extensionReason" label="Motivo extensión" min="0" max="9999"
+                                [required]="false" placeholder="Motivo extensión"
+                                (update)="projectTracking.extensionReason=$event;" [formGroup]="extensionTab">
+                            </app-numeric-input>
+                            <app-numeric-input *ngIf="!projectTracking.extAgainstIncome"
+                                [textMode]="true" 
+                                [(model)]="projectTracking.extensionReason" label="Motivo extensión" min="0" max="9999"
+                                [required]="true" placeholder="Motivo extensión"
+                                (update)="projectTracking.extensionReason=$event;" [formGroup]="extensionTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-sm-2 col-md-2">
+                            <div *ngIf="needOK()">
+                                <i class="material-icons color_red">brightness_1</i>
+                                <div class="row w-100">
+                                    <div class="col-md-12">
+                                        <mat-label>Por validar</mat-label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="!needOK()">
+                                <i class="material-icons color_green">brightness_1</i>
+                                <div class="row w-100">
+                                    <div class="col-md-12">
+                                        <mat-label>Validado por Producción</mat-label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="mt-3 alert alert-warning">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Funding vs avance de proyecto
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="row">
+                    <div class="col-md-4 col-sm-6">
+                        <mat-form-field class="w-100">
+                            <mat-label>Funding</mat-label>
+                            <input matInput placeholder="funding del proyecto"
+                                [ngModel]="projectTracking.fundingReport.funding | number: '1.0-3' "
+                                value="{{projectTracking.fundingReport.funding}}" disabled="true">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <mat-form-field class="w-100">
+                            <mat-label>NR Incurrido</mat-label>
+                            <input matInput placeholder="NR incurrido"
+                                [ngModel]="projectTracking.fundingReport.nrIncurrido | number: '1.0-3'"
+                                value="{{projectTracking.fundingReport.nrIncurrido}}" disabled="true">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <mat-form-field class="w-100">
+                            <mat-label>WIP</mat-label>
+                            <input matInput placeholder="WIP"
+                                [ngModel]="projectTracking.fundingReport.wip | number: '1.0-3'"
+                                value="{{projectTracking.fundingReport.wip}}" disabled="true">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <mat-form-field class="w-100">
+                            <mat-label>Días de DSO</mat-label>
+                            <input matInput placeholder="Días de FSO"
+                                [ngModel]="projectTracking.fundingReport.diasWIP | number: '1.0-3'"
+                                value="{{projectTracking.fundingReport.diasWIP}}" disabled="true">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <mat-form-field class="w-100">
+                            <mat-label>Incurrido vs Funding</mat-label>
+                            <input *ngIf="projectTracking.fundingReport.incurredVsFunding!=null" matInput
+                                placeholder="Incurrido vs funding"
+                                [ngModel]="projectTracking.fundingReport.incurredVsFunding | percent:'1.0-3'"
+                                value="{{projectTracking.fundingReport.incurredVsFunding}}" disabled="true">
+                            <input *ngIf="projectTracking.fundingReport.incurredVsFunding==null" matInput
+                                placeholder="Incurrido vs funding" disabled="true" value="Faltan datos para cálculo">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <mat-form-field class="w-100">
+                            <mat-label>WIP/NR N</mat-label>
+                            <input *ngIf="projectTracking.fundingReport.wipconNRN!=null" placeholder="WIP/NR N" matInput
+                                [ngModel]="projectTracking.fundingReport.wipconNRN /100 | percent:'1.0-3'"
+                                disabled="true" value="{{projectTracking.fundingReport.wipconNRN}}">
+
+                            <input *ngIf="projectTracking.fundingReport.wipconNRN==null" matInput placeholder="WIP/NR N"
+                                disabled="true" value="Faltan datos para cálculo">
+                        </mat-form-field>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel *ngIf="!validateServiceLine('STAFF AUGMENTATION')" [expanded]="true" class="mt-3">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>{{projectTracking.projectType}}</mat-panel-title>
+                    <mat-panel-description></mat-panel-description>
+                </mat-expansion-panel-header>
+                <div class="container" *ngIf="agile">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.numSprintPlannedHistories" 
+                                label="N° de historias planificadas en el Sprint" 
+                                min="0"
+                                max="99999"
+                                pattern=[0-9]
+                                placeholder="N° de historias planificadas en el Sprint"
+                                (update)="projectTracking.numSprintPlannedHistories=$event;calculateAgile()"
+                                [formGroup]="agileTab">
+                            </app-numeric-input> 
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.numFinishedSprintStories" 
+                                label="N° de historias terminadas en el Sprint" 
+                                min="0"
+                                max="99999"
+                                pattern=[0-9]
+                                placeholder="N° de historias terminadas en el Sprint"
+                                (update)="projectTracking.numFinishedSprintStories=$event;calculateAgile()"
+                                [formGroup]="agileTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Cumplimiento de Sprint</mat-label>
+                                <input matInput placeholder="Cumplimiento de Sprint"
+                                    [(ngModel)]="projectTracking.sprintComplInd"
+                                    value="{{projectTracking.sprintComplInd}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-1 col-sm-6">
+                            <i *ngIf="alertAgile" [ngClass]="getAlarmClass(alertAgile)">brightness_1</i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.numReleases" 
+                                label="N° de Releases" 
+                                min="0"
+                                max="99999"
+                                pattern=[0-9]
+                                placeholder="N° de Releases"
+                                (update)="projectTracking.numReleases=$event;"
+                                [formGroup]="agileTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.numSprints" 
+                                label="N° de Sprints" 
+                                min="0"
+                                max="99999"
+                                pattern=[0-9]
+                                placeholder="N° de Sprints"
+                                (update)="projectTracking.numSprints=$event;calculateAgile();"
+                                [formGroup]="agileTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Promedio de velocidad de los equipos</mat-label>
+                                <input fraction-size="2" matInput placeholder="Promedio de velocidad de los equipos"
+                                    [ngModel]="projectTracking.teamSpeedAverage | number:'1.0-3'"
+                                    value="{{projectTracking.teamSpeedAverage}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="container" *ngIf="service">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6" data-toggle="tooltip"
+                        title="Considerar estimaciones/requerimientos cerrados durante las últimas 2 semanas">
+						<app-numeric-input 
+                                [(model)]="projectTracking.service.totalEstRequested" 
+                                label="Total de estimaciones solicitadas" 
+                                min="0"
+                                max="99999"
+                                pattern=[0-9]
+                                placeholder="Total de estimaciones solicitadas"
+                                (update)="projectTracking.service.totalEstRequested=$event;calculateServiceValues()"
+                                [formGroup]="serviceTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6" data-toggle="tooltip"
+                        title="Considerar estimaciones/requerimientos cerrados durante las últimas 2 semanas">
+						<app-numeric-input 
+                                [(model)]="projectTracking.service.numEstDelivered" 
+                                label="Nº de estimaciones en plazo" 
+                                min="0"
+                                max="99999"
+                                pattern=[0-9]
+                                placeholder="Nº de estimaciones en plazo"
+                                (update)="projectTracking.service.numEstDelivered=$event;calculateServiceValues()"
+                                [formGroup]="serviceTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6" data-toggle="tooltip"
+                        title="Considerar estimaciones/requerimientos cerrados durante las últimas 2 semanas">
+                            <mat-form-field class="w-100">
+                                <mat-label>% de estimaciones entregadas en plazo</mat-label>
+                                <input matInput placeholder="% de estimaciones entregadas en plazo"
+                                    [ngModel]="projectTracking.service.percentageEstDelivered / 100 | percent:'1.0-3'"
+                                    value="{{projectTracking.service.percentageEstDelivered}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-1 col-sm-6">
+                            <i *ngIf="alertServiceEst" [ngClass]="getAlarmClass(alertServiceEst)">brightness_1</i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6" data-toggle="tooltip"
+                        title="Considerar estimaciones/requerimientos cerrados durante las últimas 2 semanas">
+						<app-numeric-input 
+                                [(model)]="projectTracking.service.totalReqRequested" 
+                                label="Total de requerimientos solicitados" 
+                                min="0"
+                                max="99999"
+                                pattern=[0-9]
+                                placeholder="Total de requerimientos solicitados"
+                                (update)="projectTracking.service.totalReqRequested=$event;calculateServiceValues()"
+                                [formGroup]="serviceTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6" data-toggle="tooltip"
+                        title="Considerar estimaciones/requerimientos cerrados durante las últimas 2 semanas"> 
+						    <app-numeric-input
+                                [(model)]="projectTracking.service.numReqDelivered" 
+                                label="Nº de requerimiento en plazo" 
+                                min="0"
+                                max="99999"
+                                pattern=[0-9]
+                                placeholder="Nº de requerimiento en plazo"
+                                (update)="projectTracking.service.numReqDelivered=$event;calculateServiceValues()"
+                                [formGroup]="serviceTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6" data-toggle="tooltip"
+                        title="Considerar estimaciones/requerimientos cerrados durante las últimas 2 semanas">
+                            <mat-form-field class="w-100">
+                                <mat-label>% de requerimientos resueltos en plazo</mat-label>
+                                <input matInput placeholder="% de requerimientos resueltos en plazo"
+                                    [ngModel]="projectTracking.service.percentageReqResolved / 100 | percent:'1.0-3'"
+                                    value="{{projectTracking.service.percentageReqResolved}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-1 col-sm-6">
+                            <i *ngIf="alertServiceReq" [ngClass]="getAlarmClass(alertServiceReq)">brightness_1</i>
+                        </div>
+                    </div>
+                  <!--<div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <app-numeric-input [(model)]="projectTracking.numIncidentsRequested"
+                                label="Nº de incidentes solicitados" min="0" max="99999"
+                                placeholder="Nº de incidentes solicitados"
+                                (update)="projectTracking.numIncidentsRequested=$event;calculateServiceValues()"
+                                [formGroup]="detailTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>% de incidentes vs total requerimientos solicitados</mat-label>
+                                <input matInput placeholder="% de incidentes vs total requerimientos solicitados"
+                                    [ngModel]="projectTracking.incidentsVStotal  / 100 | percent:'1.0-3'"
+                                    value="{{projectTracking.incidentsVStotal}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>% de incidentes vs total requerimientos solicitados</mat-label>
+                                <input matInput placeholder="% de incidentes vs total requerimientos solicitados"
+                                    [ngModel]="projectTracking.incidentsVStotal  / 100 | percent:'1.0-3'"
+                                    value="{{projectTracking.incidentsVStotal}}" disabled="true">
+                            </mat-form-field>
+                        </div>                        
+                        <div *ngIf="validateProjectType('SERVICIOS') && validateServiceLine('IM')"
+                            class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>% de indicador de continuidad operativa</mat-label>
+                                <input matInput appPercentage placeholder="% de indicador de continuidad operativa"
+                                    [ngModel]="projectTracking.operationalContinuity"
+                                    (ngModelChange)="projectTracking.operationalContinuity=$event;"
+                                    value="{{projectTracking.operationalContinuity}}">
+                            </mat-form-field>
+                        </div>
+                    </div>-->
+                </div>
+                <div class="container" *ngIf="tradicional">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.traditional.currentProjectPhase"
+                                label="Fase del proyecto" 
+                                placeholder="Fase del proyecto"
+                                [required]="true"
+                                (update)="projectTracking.traditional.currentProjectPhase=$event;" 
+                                [formGroup]="tradicionalTab"
+                                [textMode]="true">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.traditional.actualPercentage"
+                                label="% de Avance Real" 
+                                min="0" max="100"
+                                placeholder="% de Avance Real"
+                                [required]="true"
+                                (update)="projectTracking.traditional.actualPercentage=$event;changeHitoGeneral()" 
+                                [formGroup]="tradicionalTab"
+                                [usePercent]="true"
+                                pattern="[0-9 ^. ,]">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.traditional.plannedPercentage"
+                                label="% de Avance Planificado" 
+                                min="0" max="100"
+                                placeholder="% de Avance Planificado"
+                                [required]="true"
+                                (update)="projectTracking.traditional.plannedPercentage=$event;changeHitoGeneral()" 
+                                [formGroup]="tradicionalTab"
+                                [usePercent]="true"
+                                pattern="[0-9 ^. ,]">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-2 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>% Desvío total</mat-label>
+                                <input matInput placeholder="% Desvío total"
+                                    [ngModel]="projectTracking.traditional.deviationPercentage  / 100 | percent:'1.0-3'"
+                                    value="{{projectTracking.traditional.deviationPercentage / 100}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-1 col-sm-6">
+                            <i *ngIf="alertHitoGeneral" [ngClass]="getAlarmClass(alertHitoGeneral)">brightness_1</i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h4>Hito 1</h4>
+                        <i *ngIf="alertHito1" [ngClass]="getAlarmClass(alertHito1)">brightness_1</i>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Hito Relevante</mat-label>
+                                <input matInput type="text" [(ngModel)]="projectTracking.traditional.relevantMilestoneOne"
+                                placeholder="Hito Relevante">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Fecha de Hito</mat-label>
+                                <input [min]="projectTracking.startDate" matInput [matDatepicker]="milestoneDateOne"
+                                    [(ngModel)]="projectTracking.traditional.milestoneDateOne" [readonly]="true"
+                                    (click)="milestoneDateOne.open()">
+                                <mat-datepicker-toggle matSuffix [for]="milestoneDateOne"></mat-datepicker-toggle>
+                                <mat-datepicker #milestoneDateOne></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <app-numeric-input 
+                            [(model)]="projectTracking.traditional.actualProgressPercentageOne"
+                            label="% de Avance Real Hito" 
+                            min="0" max="100"
+                            placeholder="% de Avance Real Hito"
+                            (update)="projectTracking.traditional.actualProgressPercentageOne=$event;changeHito1()" 
+                            [formGroup]="tradicionalTab"
+                            [usePercent]="true"
+                            pattern="[0-9 ^. ,]">
+                        </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                        <app-numeric-input 
+                            [(model)]="projectTracking.traditional.compliancePercentageOne"
+                            label="% de Avance Planificado Hito" 
+                            min="0" max="100"
+                            placeholder="% de Avance Planificado Hito"
+                            (update)="projectTracking.traditional.compliancePercentageOne=$event;changeHito1()" 
+                            [formGroup]="tradicionalTab"
+                            [usePercent]="true"
+                            pattern="[0-9 ^. ,]">
+                        </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>% de desvío del Hito</mat-label>
+                                <input matInput placeholder="% de desvío del Hito"
+                                    [ngModel]="projectTracking.traditional.deviationPercentageOne / 100 | percent:'1.0-3'"
+                                    value="{{projectTracking.traditional.deviationPercentageOne}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h4>Hito 2</h4>
+                        <i *ngIf="alertHito2" [ngClass]="getAlarmClass(alertHito2)">brightness_1</i>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Hito Relevante</mat-label>
+                                <input matInput type="text" [(ngModel)]="projectTracking.traditional.relevantMilestoneTwo"
+                                placeholder="Hito Relevante">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Fecha de Hito</mat-label>
+                                <input [min]="projectTracking.startDate" matInput [matDatepicker]="milestoneDateTwo"
+                                    [(ngModel)]="projectTracking.traditional.milestoneDateTwo" [readonly]="true"
+                                    (click)="milestoneDateTwo.open()">
+                                <mat-datepicker-toggle matSuffix [for]="milestoneDateTwo"></mat-datepicker-toggle>
+                                <mat-datepicker #milestoneDateTwo></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.traditional.actualProgressPercentageTwo"
+                                label="% de Avance Real Hito" 
+                                min="0" max="100"
+                                placeholder="% de Avance Real Hito"
+                                (update)="projectTracking.traditional.actualProgressPercentageTwo=$event;changeHito2()" 
+                                [formGroup]="tradicionalTab"
+                                [usePercent]="true"
+                                pattern="[0-9 ^. ,]">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.traditional.compliancePercentageTwo"
+                                label="% de Avance Planificado Hito" 
+                                min="0" max="100"
+                                placeholder="% de Avance Planificado Hito"
+                                (update)="projectTracking.traditional.compliancePercentageTwo=$event;changeHito2()" 
+                                [formGroup]="tradicionalTab"
+                                [usePercent]="true"
+                                pattern="[0-9 ^. ,]">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>% de desvío del Hito</mat-label>
+                                <input matInput placeholder="% de desvío del Hito"
+                                    [ngModel]="projectTracking.traditional.deviationPercentageTwo / 100 | percent:'1.0-3'"
+                                    value="{{projectTracking.traditional.deviationPercentageTwo}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h4>Hito 3</h4>
+                        <i *ngIf="alertHito3" [ngClass]="getAlarmClass(alertHito3)">brightness_1</i>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Hito Relevante</mat-label>
+                                <input matInput type="text" [(ngModel)]="projectTracking.traditional.relevantMilestoneThree"
+                                placeholder="Hito Relevante">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Fecha de Hito</mat-label>
+                                <input [min]="projectTracking.startDate" matInput [matDatepicker]="milestoneDateThree"
+                                    [(ngModel)]="projectTracking.traditional.milestoneDateThree" [readonly]="true"
+                                    (click)="milestoneDateThree.open()">
+                                <mat-datepicker-toggle matSuffix [for]="milestoneDateThree"></mat-datepicker-toggle>
+                                <mat-datepicker #milestoneDateThree></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.traditional.actualProgressPercentageThree"
+                                label="% de Avance Real Hito" 
+                                min="0" max="100"
+                                placeholder="% de Avance Real Hito"
+                                (update)="projectTracking.traditional.actualProgressPercentageThree=$event;changeHito3()" 
+                                [formGroup]="tradicionalTab"
+                                [usePercent]="true"
+                                pattern="[0-9 ^. ,]">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.traditional.compliancePercentageThree"
+                                label="% de Avance Planificado Hito" 
+                                min="0" max="100"
+                                placeholder="% de Avance Planificado Hito"
+                                (update)="projectTracking.traditional.compliancePercentageThree=$event;changeHito3()" 
+                                [formGroup]="tradicionalTab"
+                                [usePercent]="true"
+                                pattern="[0-9 ^. ,]">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>% de desvío del Hito</mat-label>
+                                <input matInput placeholder="% de desvío del Hito"
+                                    [ngModel]="projectTracking.traditional.deviationPercentageThree / 100 | percent:'1.0-3'"
+                                    value="{{projectTracking.traditional.deviationPercentageThree}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h4>Hito 4</h4>
+                        <i *ngIf="alertHito4" [ngClass]="getAlarmClass(alertHito4)">brightness_1</i>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Hito Relevante</mat-label>
+                                <input matInput type="text" [(ngModel)]="projectTracking.traditional.relevantMilestoneFour"
+                                placeholder="Hito Relevante">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Fecha de Hito</mat-label>
+                                <input [min]="projectTracking.startDate" matInput [matDatepicker]="milestoneDateFour"
+                                    [(ngModel)]="projectTracking.traditional.milestoneDateFour" [readonly]="true"
+                                    (click)="milestoneDateFour.open()">
+                                <mat-datepicker-toggle matSuffix [for]="milestoneDateFour"></mat-datepicker-toggle>
+                                <mat-datepicker #milestoneDateFour></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.traditional.actualProgressPercentageFour"
+                                label="% de Avance Real Hito" 
+                                min="0" max="100"
+                                placeholder="% de Avance Real Hito"
+                                (update)="projectTracking.traditional.actualProgressPercentageFour=$event;changeHito4()" 
+                                [formGroup]="tradicionalTab"
+                                [usePercent]="true"
+                                pattern="[0-9 ^. ,]">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.traditional.compliancePercentageFour"
+                                label="% de Avance Planificado Hito" 
+                                min="0" max="100"
+                                placeholder="% de Avance Planificado Hito"
+                                (update)="projectTracking.traditional.compliancePercentageFour=$event;changeHito4()" 
+                                [formGroup]="tradicionalTab"
+                                [usePercent]="true"
+                                pattern="[0-9 ^. ,]">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>% de desvío del Hito</mat-label>
+                                <input matInput placeholder="% de desvío del Hito"
+                                    [ngModel]="projectTracking.traditional.deviationPercentageFour / 100 | percent:'1.0-3'"
+                                    value="{{projectTracking.traditional.deviationPercentageFour}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h4>Hito 5</h4>
+                        <i *ngIf="alertHito5" [ngClass]="getAlarmClass(alertHito5)">brightness_1</i>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Hito Relevante</mat-label>
+                                <input matInput type="text" [(ngModel)]="projectTracking.traditional.relevantMilestoneFive"
+                                placeholder="Hito Relevante">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>Fecha de Hito</mat-label>
+                                <input [min]="projectTracking.startDate" matInput [matDatepicker]="milestoneDateFive"
+                                    [(ngModel)]="projectTracking.traditional.milestoneDateFive" [readonly]="true"
+                                    (click)="milestoneDateFive.open()">
+                                <mat-datepicker-toggle matSuffix [for]="milestoneDateFive"></mat-datepicker-toggle>
+                                <mat-datepicker #milestoneDateFive></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.traditional.actualProgressPercentageFive"
+                                label="% de Avance Real Hito" 
+                                min="0" max="100"
+                                placeholder="% de Avance Real Hito"
+                                (update)="projectTracking.traditional.actualProgressPercentageFive=$event;changeHito5()" 
+                                [formGroup]="tradicionalTab"
+                                [usePercent]="true"
+                                pattern="[0-9 ^. ,]">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.traditional.compliancePercentageFive"
+                                label="% de Avance Planificado Hito" 
+                                min="0" max="100"
+                                placeholder="% de Avance Planificado Hito"
+                                (update)="projectTracking.traditional.compliancePercentageFive=$event;changeHito5()" 
+                                [formGroup]="tradicionalTab"
+                                [usePercent]="true"
+                                pattern="[0-9 ^. ,]">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <mat-form-field class="w-100">
+                                <mat-label>% de desvío del Hito</mat-label>
+                                <input matInput placeholder="% de desvío del Hito"
+                                    [ngModel]="projectTracking.traditional.deviationPercentageFive / 100 | percent:'1.0-3'"
+                                    value="{{projectTracking.traditional.deviationPercentageFive}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel class="mt-3">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Delivery</mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="container">
+                    <div class="row" >
+                        <h4 class="col-sm-4 col-md-4">Satisfacción del Cliente</h4>
+                        <div class="col-md-8 col-sm-8 text-right">
+                            <i [ngClass]="deliveryAlarm()">brightness_1</i>
+                        </div>
+                    </div>
+                    <div class="row alert alert-warning">
+                        <div class="col-sm-4 col-md-4">
+                            <mat-form-field class="w-100">
+                                <mat-label>Nota de satisfaccion</mat-label>
+                                <input matInput disabled="true"
+                                    [ngModel]="projectTracking.survayReport.grade | number: '1.0-3'"
+                                    value="{{projectTracking.survayReport.grade}}">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <mat-form-field class="w-100">
+                                <mat-label>Fecha de la encuesta</mat-label>
+                                <input matInput [matDatepicker]="survayDate"
+                                    [(ngModel)]="projectTracking.survayReport.survayDate" disabled="true">
+                                <mat-datepicker-toggle matSuffix [for]="survayDate"></mat-datepicker-toggle>
+                                <mat-datepicker #survayDate></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <mat-form-field class="w-100">
+                                <mat-label>Plan de accion solicitado</mat-label>
+                                <input matInput disabled="true" type="text"
+                                    [(ngModel)]="projectTracking.survayReport.actionPlane"
+                                    value="{{projectTracking.survayReport.actionPlane}}">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <mat-form-field class="w-100">
+                                <mat-label>Comentarios</mat-label>
+                                <textarea placeholder="Comentarios" disabled="true" maxlength="250" matInput
+                                    [(ngModel)]="projectTracking.survayReport.comments">{{projectTracking.survayReport.comments}}</textarea>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="row"
+                        *ngIf="!validateServiceLine('STAFF AUGMENTATION')">
+                        <h4>Casos de Pruebas</h4>
+                    </div>
+                    <div class="row border border-gray"
+                        *ngIf="!validateServiceLine('STAFF AUGMENTATION')">
+                        <div class="col-md-4 col-sm-4">
+                            <app-numeric-input [(model)]="projectTracking.technical.testCasesPlanned"
+                                label="N° casos de prueba Planificados" 
+                                min="1" max="999"
+                                pattern=[0-9]
+                                placeholder="N° casos de prueba Planificados"
+                                (update)="projectTracking.technical.testCasesPlanned=$event;calculateTestCaseIndex();"
+                                [formGroup]="tradicionalTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <app-numeric-input [(model)]="projectTracking.technical.testCasesReal"
+                                label="N° casos de prueba Reales" 
+                                min="0" max="999"
+                                pattern=[0-9]
+                                placeholder="N° casos de prueba Reales"
+                                (update)="projectTracking.technical.testCasesReal=$event;calculateTestCaseIndex();"
+                                [formGroup]="tradicionalTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <mat-form-field class="w-100">
+                                <mat-label>Indicador de casos de prueba</mat-label>
+                                <input disabled="true" placeholder="Indicador de casos de prueba" matInput
+                                    [ngModel]="projectTracking.technical.testCasesIndex / 100 | percent:'1.0-2'"
+                                    value="{{projectTracking.technical.testCasesIndex}}">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row"
+                        *ngIf="!validateServiceLine('STAFF AUGMENTATION')">
+                        <h4>Errores en Producción</h4>
+                    </div>
+                    <div class="row border border-gray"
+                        *ngIf="!validateServiceLine('STAFF AUGMENTATION')">
+                        <div class="col-md-4 col-sm-4">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.technical.totalReqClosedPeriod"
+                                label="Total de requerimientos cerrados en el periodo" 
+                                min="0" max="999"
+                                placeholder="Total de requerimientos cerrados en el periodo"
+                                (update)="projectTracking.technical.totalReqClosedPeriod=$event;calculateProdErrorIndex();calculateRollbackIndex();"
+                                pattern=[0-9]
+                                [formGroup]="tradicionalTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.technical.totalReqErrorPeriod"
+                                label="Requerimientos con error en Producción del periodo" 
+                                min="0" max="999"
+                                pattern=[0-9]
+                                placeholder="Requerimientos con error en Producción del periodo"
+                                (update)="projectTracking.technical.totalReqErrorPeriod=$event;calculateProdErrorIndex();"
+                                [formGroup]="tradicionalTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <mat-form-field class="w-100">
+                                <mat-label>Indicador errores en Producción</mat-label>
+                                <input disabled="true" placeholder="Indicador errores en Producción" matInput
+                                    [ngModel]="projectTracking.technical.prodErrorIndex / 100 | percent:'1.0-2'"
+                                    value="{{projectTracking.technical.prodErrorIndex}}">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row"
+                        *ngIf="!validateServiceLine('STAFF AUGMENTATION')">
+                        <h4>Rollbacks</h4>
+                    </div>
+                    <div class="row border border-gray"
+                        *ngIf="!validateServiceLine('STAFF AUGMENTATION')">
+                        <div class="col-md-4 col-sm-4">
+                            <app-numeric-input 
+                                [(model)]="projectTracking.technical.numRollbakReqPer"
+                                label="Requerimientos con rollback del periodo" 
+                                min="0" max="999"
+                                placeholder="Requerimientos con rollback del periodo"
+                                (update)="projectTracking.technical.numRollbakReqPer=$event;calculateRollbackIndex();"
+                                pattern=[0-9]
+                                [formGroup]="tradicionalTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <mat-form-field class="w-100">
+                                <mat-label>Indicador rollbacks en Producción</mat-label>
+                                <input *ngIf="projectTracking.technical.rollbackProd!=null" matInput
+                                    [ngModel]="projectTracking.technical.rollbackProd /100 | percent:'1.0-3'"
+                                    value="{{projectTracking.technical.rollbackProd}}" disabled="true">
+                                <input matInput *ngIf="projectTracking.technical.rollbackProd==null" type="text"
+                                    value="Faltan datos para cálculo" disabled="true">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row"
+                        *ngIf="!validateServiceLine('STAFF AUGMENTATION')">
+                        <h4>Calidad del código</h4>
+                    </div>
+                    <div class="row border border-gray"
+                        *ngIf="!validateServiceLine('STAFF AUGMENTATION')">
+                        <div class="col-md-4 col-sm-4">
+                            <app-numeric-input 
+                            [model]="projectTracking.technical.periodQualityComp"
+                                label="% Cumplimiento de Calidad del código" 
+                                min="0" max="100" 
+                                step="0.1"
+                                maxDecimals="3" 
+                                pattern="[0-9 ^. ,]"
+                                [usePercent]="true"
+                                placeholder="% Cumplimiento de Calidad del código"
+                                (update)="projectTracking.technical.periodQualityComp=$event;" 
+                                [formGroup]="tradicionalTab">
+                            </app-numeric-input>
+                        </div>
+                        <div class="col-md-1 col-sm-1">
+                            <h4 style="line-height:3;">%</h4>
+                        </div>
+
+                    </div>
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel class="mt-3" [hidden]="!validateServiceLine('STAFF AUGMENTATION')"
+                data-toggle="tooltip"
+                title="Si el proyecto es de tipo Staff Augmentation, debe indicar los perfiles que posee este proyecto, y la tarifa en UF’s para cada uno">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Perfiles y Tarifas</mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="container">
+                <div class="row">
+                    <div class="col-md-4 col-sm-4" [hidden]="hideProfilesTable()">
+                        <mat-form-field class="w-100">
+                            <mat-label>Buscar</mat-label>
+                            <input matInput (keyup)="applyFilter($event)" placeholder="Buscar">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4 col-sm-4" [hidden]="!hideProfilesTable()">
+                        <h4>Sin data para mostrar</h4>
+                    </div>
+                    <div class="col-md-8 col-sm-8 text-right">
+                        <i [ngClass]="staffAlarm()">brightness_1</i>
+                    </div>
+                    <div class="col-md-12 col-sm-12 w-100" [hidden]="hideProfilesTable()">
+                        <div class="col-md-12 col-sm-12 table-responsive">
+                            <table mat-table [dataSource]="dataSource" matSort class="w-100">
+                                <!-- perfilClave -->
+                                <ng-container matColumnDef="profileName" class="col-md-12">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre del perfil </th>
+                                    <td mat-cell *matCellDef="let row;let i = index">
+                                        <app-numeric-input 
+                                            [(model)]="row.profileName" 
+                                            label="" 
+                                            [required]="true" 
+                                            identity="{{i}}.nombre" 
+                                            placeholder="" 
+                                            (update)="row.profileName=$event;" 
+                                            [formGroup]="staffTab"
+                                            [textMode]="true">
+                                        </app-numeric-input>
+                                    </td>
+                                </ng-container>
+                                <!-- nombrePerfilClave -->
+                                <ng-container matColumnDef="tarifa" class="col-md-12">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Tarifa en UF's</th>
+                                    <td mat-cell *matCellDef="let row;let i = index">
+                                        <app-numeric-input 
+                                            [(model)]="row.tarifa" 
+                                            label="Tarifa en UF's"
+                                            identity="{{i}}.tarifa" 
+                                            min="0" max="9999.9999" 
+                                            maxDecimals="4" step="0.1"
+                                            [required]="true"
+                                            placeholder="Tarifa en UF's"
+                                            pattern="[0-9 ^. ,]"
+                                            (update)="row.tarifa=$event;calculateSumtarifas()" 
+                                            [formGroup]="staffTab">
+                                        </app-numeric-input>
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="opt" class="col-md-5">
+                                    <th mat-header-cell *matHeaderCellDef class="text-right"> Opciones </th>
+                                    <td mat-cell *matCellDef="let row" class="text-right">
+                                        <button mat-icon-button (click)="deleteProfile(row)">
+                                            <i class="material-icons">delete</i>
+                                        </button>
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+                                </tr>
+                            </table>
+                        </div>
+                        <hr />
+                        <div class="row">                        
+                            <div class="col-md-4 col-sm-4" [hidden]="hideProfilesTable()">
+                                <mat-form-field class="w-100">
+                                    <mat-label>Tipo de tarifa</mat-label>
+                                    <mat-select [(ngModel)]="projectTracking.staff.rateType" [formControl]="rateTypeInput" [required]="true">
+                                        <mat-option [value]="0">Tarifa fija mensual</mat-option>
+                                        <mat-option [value]="1">Tarifa por hora</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-5 col-sm-5 text-right" style="line-height: 5;">Total UF's</div>
+                            <div class="col-md-3 col-sm-3 text-left" style="line-height: 5;">
+                                <input matInput class="disabled_highlight" disabled="true"
+                                    [ngModel]="projectTracking.staff.sumTarifas | number :'1.0-4'" placeholder="Total de tarifas"
+                                    value="{{projectTracking.staff.sumTarifas}}">
+                            </div>
+                        </div>
+                        <mat-paginator (page)="handlePaginatorEvent($event)" [pageSize]="paginatorSize"
+                            [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                    </div>
+
+                    <div class="col-md-12 col-sm-12">
+                        <mat-expansion-panel #perfilPanel>
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>Añadir Perfil</mat-panel-title>
+                                <mat-panel-description></mat-panel-description>
+                            </mat-expansion-panel-header>
+                            <div class="w-100">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <app-numeric-input 
+                                            [(model)]="newDetail.profileName" 
+                                            label="Nombre" 
+                                            [required]="true" 
+                                            placeholder="Nombre" 
+                                            (update)="newDetail.profileName=$event;" 
+                                            [formGroup]="newStaffTab"
+                                            [textMode]="true">
+                                        </app-numeric-input>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <app-numeric-input 
+                                            [(model)]="newDetail.tarifa" 
+                                            min="0" max="9999.9999"
+                                            maxDecimals="4" 
+                                            step="0.1" 
+                                            [required]="true" 
+                                            placeholder="Tarifa en UF's"
+                                            pattern="[0-9 ^. ,]"
+                                            (update)="newDetail.tarifa=$event;" 
+                                            [formGroup]="newStaffTab">
+                                        </app-numeric-input>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6 col-6">
+                                        <button mat-raised-button (click)="clean()">Limpiar</button>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-6 text-right">
+                                        <button mat-raised-button color="primary"
+                                            (click)="agregarPerfil(perfilPanel); calculateSumtarifas();">Añadir</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-expansion-panel>
+                    </div>
+                </div>
+            </div>
+            </mat-expansion-panel>
+            <div class="row mt-3 action-panel">
+                <div class="col-md-6 col-sm-6 col-6">
+                    <button mat-raised-button routerLink="/app/project-tracking">Volver</button>
+                </div>
+                <div class="col-md-6 col-sm-6 col-6 text-right">
+                    <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+
+    <mat-tab *ngIf="isAdminProfile() && projectTracking.declaredExtension" label="Extensión proyecto">
+        <div class="container">
+            <mat-card class="mt-3">
+                <h3>Validar Extensión</h3>
+                <div class="container alert alert-warning">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-4">
+                            <mat-form-field class="w-100">
+                                <mat-label>Código Proyecto</mat-label>
+                                <input matInput type="text" value="{{projectTracking.projectCode}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <mat-form-field class="w-100">
+                                <mat-label>Fecha fin proyecto</mat-label>
+                                <input matInput [matDatepicker]="endDate2" [(ngModel)]="projectTracking.endDate"
+                                    disabled="true">
+                                <mat-datepicker-toggle matSuffix [for]="endDate2"></mat-datepicker-toggle>
+                                <mat-datepicker #endDate2></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <mat-form-field class="w-100">
+                                <mat-label>Fecha real fin proyecto</mat-label>
+                                <input matInput [matDatepicker]="realEndDate2" [(ngModel)]="projectTracking.realEndDate"
+                                    disabled="true">
+                                <mat-datepicker-toggle matSuffix [for]="realEndDate2"></mat-datepicker-toggle>
+                                <mat-datepicker #realEndDate2></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-3">
+                            <div class="w-100">
+                                <mat-label>¿ Extensión es contra ingresos ?</mat-label>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6 w-100">
+                                        <mat-checkbox labelPosition="before" disabled="true"
+                                            [checked]="projectTracking.extAgainstIncome">Si</mat-checkbox>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 w-100">
+                                        <mat-checkbox labelPosition="before" disabled="true"
+                                            [checked]="!projectTracking.extAgainstIncome">No</mat-checkbox>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9 col-sm-9">
+                            <mat-form-field class="w-100">
+                                <input matInput type="text" value="{{projectTracking.extensionReason}}" disabled="true">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-12 text-right">
+                        <div *ngIf="needOK(false)">
+                            <button mat-raised-button class="detail-button approve" (click)="aprobarExtension()">Aprobar
+                                Extensión</button>
+                        </div>
+                        <div *ngIf="!needOK(false)">
+                            <button mat-raised-button disabled>Extensión Aprobada</button>
+                        </div>
+                    </div>
+                </div>
+            </mat-card>
+            <div class="row mt-3 action-panel">
+                <div class="col-md-6 col-sm-6 col-6">
+                    <button mat-raised-button routerLink="/app/project-tracking">Volver</button>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab *ngIf="isAdminProfile() && validateProjectType('SERVICIOS')" label="Ajustes">
+        <div class="container">
+            <mat-card class="mt-3">
+                <h3>Alarmas Servicio</h3>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-1 col-sm-1 text-right">
+                            <i class="material-icons color_green">brightness_1</i>
+                        </div>
+                        <div class="col-md-1 col-sm-1">
+                            <h3>Bajo</h3>
+                        </div>
+                        <div class="col-md-5 col-sm-5">
+                            <mat-form-field class="w-100">
+                                <mat-label>Inferior</mat-label>
+                                <input matInput type="number" value="{{projectTracking.yellowMargin.top}}"
+                                    disabled="disabled">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-1 col-sm-1" style="padding-top: 20px;font-size: 20px;">
+                            <span>&#8804; X &#8804;</span>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <mat-form-field class="w-100">
+                                <mat-label>Superior</mat-label>
+                                <input matInput type="number" value="100" disabled="disabled">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1 col-sm-1 text-right">
+                            <i class="material-icons color_yellow">brightness_1</i>
+                        </div>
+                        <div class="col-md-1 col-sm-1">
+                            <h3>Medio</h3>
+                        </div>
+                        <div class="col-md-5 col-sm-5">
+                            <mat-form-field class="w-100">
+                                <mat-label>Inferior</mat-label>
+                                <input matInput #bottomMedium step="0.01" type="number"
+                                    (change)="checkMinMargin(bottomMedium)" min="{{projectTracking.redMargin.bottom+1}}"
+                                    max="{{projectTracking.yellowMargin.top-1}}"
+                                    value="{{projectTracking.yellowMargin.bottom}}"
+                                    [(ngModel)]="projectTracking.yellowMargin.bottom">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-1 col-sm-1" style="padding-top: 20px;font-size: 20px;">
+                            <span>&#8804; X &#60; </span>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <mat-form-field class="w-100">
+                                <mat-label>Superior</mat-label>
+                                <input matInput #topMedium step="0.01" (change)="checkMaxMargin(topMedium)"
+                                    type="number" min="{{projectTracking.yellowMargin.bottom+1}}" max="100"
+                                    value="{{projectTracking.yellowMargin.top}}"
+                                    [(ngModel)]="projectTracking.yellowMargin.top">
+                            </mat-form-field>
+                        </div>
+                    </div> 
+                    <div class="row">
+                        <div class="col-md-1 col-sm-1 text-right">
+                            <i class="material-icons color_red">brightness_1</i>
+                        </div>
+                        <div class="col-md-1 col-sm-1">
+                            <h3>Alto</h3>
+                        </div>
+                        <div class="col-md-5 col-sm-5">
+                            <mat-form-field class="w-100">
+                                <mat-label>Inferior</mat-label>
+                                <input matInput #hightTop step="0.01" type="number"
+                                    value="{{projectTracking.redMargin.bottom}}"
+                                    [(ngModel)]="projectTracking.redMargin.bottom" disabled="disabled">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-1 col-sm-1" style="padding-top: 20px;font-size: 20px;">
+                            <span>&#8804; X &#60; </span>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <mat-form-field class="w-100">
+                                <mat-label>Superior</mat-label>
+                                <input matInput #bottomMedium step="0.01" type="number"
+                                    (change)="checkMinMargin(bottomMedium)" min="{{projectTracking.redMargin.bottom+1}}"
+                                    max="{{projectTracking.yellowMargin.top-1}}"
+                                    value="{{projectTracking.yellowMargin.bottom}}"
+                                    [(ngModel)]="projectTracking.yellowMargin.bottom">
+                            </mat-form-field>
+                        </div>
+
+                    </div>
+                </div>
+            </mat-card>
+            <div class="row mt-3 action-panel">
+                <div class="col-md-6 col-sm-6 col-6">
+                    <button mat-raised-button routerLink="/app/project-tracking">Volver</button>
+                </div>
+                <div class="col-md-6 col-sm-6 col-6 text-right">
+                    <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+    </mat-tab>
+    <mat-tab *hasPermission="['ADMINISTRADOR']; domain 'SEGUIMIENTO_PROYECTOS'" label="Log de Cambios">
+        <app-change-log #changeLog [(projectTracking)]="projectTracking"></app-change-log>
+    </mat-tab>
+    <mat-tab *hasPermission="['ADMINISTRADOR']; domain 'SEGUIMIENTO_PROYECTOS'" label="Histórico">
+        <app-history-tab #historyTab></app-history-tab>
+    </mat-tab>
+</mat-tab-group>

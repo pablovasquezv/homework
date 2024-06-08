@@ -1,0 +1,9 @@
+*.mark
+*.class
+bin/*
+covid/dist/*
+.classpath
+build/*
+.gradle/*
+.settings/*
+.project

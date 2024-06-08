@@ -1,0 +1,212 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">Plan de contingencia</li>
+    </ol>
+</nav>
+
+<div class="container-fluid">
+    <div class="row mt-3">
+        <div class="col-md-12 text-right">
+            <button mat-raised-button color="primary" *hasPermission="['ADMINISTRADOR']; domain 'CONTINGENCIA'" (click)="upload()" class="ml-2">Carga masiva</button>
+            <input type="file" #fileUpload id="fileUpload" name="fileUpload"
+                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;" />
+        </div>
+        <div class="col-md-12 text-right">
+            <a href="assets/template/Plan-Contingencia_Template.xlsx" target="_blank">Descargar Template</a>
+        </div>
+    </div>
+
+    <!-- Sección de Filtros -->
+    <h2>Filtros</h2>
+    <mat-card>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-2 col-md-4">
+                    <app-find-complete (found)="filtroUnidad=$event" 
+                    [value]="filtroUnidad" [class]="'w-100'"
+                    [label]="'UN'" 
+                    [(options)]="unList"></app-find-complete>
+                </div>
+
+                <div class="col-lg-2 col-md-4">
+                    <app-find-complete (found)="filtroSector=$event" 
+                    [value]="filtroSector" [class]="'w-100'" 
+                    [label]="'Sector'"
+                    [(options)]="sectorList"></app-find-complete>
+                </div>
+
+                <div class="col-lg-2 col-md-4">
+                    <app-find-complete (found)="filtroCE=$event" 
+                    [value]="filtroCE" [class]="'w-100'" 
+                    [label]="'CE'"
+                    [(options)]="ceList"></app-find-complete>
+                </div>
+
+                <div class="col-lg-3 col-md-4">
+                    <app-find-complete (found)="filtroNombreCliente=$event" 
+                    [value]="filtroNombreCliente" [class]="'w-100'" 
+                    [label]="'Nombre Cliente'"
+                    [(options)]="nombreClienteList"></app-find-complete>
+                </div>
+
+                <div class="col-lg-3 col-md-4">
+                    <app-find-complete (found)="filtroProjectCode=$event" 
+                    [value]="filtroProjectCode" [class]="'w-180'" 
+                    [label]="'Código de Proyecto'"
+                    [(options)]="projectCodeList"></app-find-complete>
+                </div>
+
+            </div>
+
+            <div class="row">            
+                <div class="col-lg-3 col-md-4">
+                    <app-find-complete (found)="filtroProjectName=$event" 
+                    [(value)]="filtroProjectName" [class]="'w-100'" 
+                    [label]="'Nombre de Proyecto'"
+                    [(options)]="projectNameList"></app-find-complete>
+                </div>
+
+                <div class="col-lg-3 col-md-4">
+                    <app-find-complete (found)="filtroClienteManager=$event" 
+                    [(value)]="filtroClienteManager" [class]="'w-100'" 
+                    [label]="'Nom. Cliente Manager'"
+                    [(options)]="clienteManagerList"></app-find-complete>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <app-find-complete (found)="filtroGerenteProyecto=$event" 
+                    [(value)]="filtroGerenteProyecto" [class]="'w-100'" 
+                    [label]="'Gerente de Proyecto'"
+                    [(options)]="gerenteProyectoList"></app-find-complete>
+                </div>
+
+                <div class="col-lg-3 col-md-4">
+                    <button mat-raised-button color="primary" class="mr-2" (click)="limpiar()">Limpiar</button>
+                    <button mat-raised-button color="primary" type="submit" (click)="searchByFilters()">Filtrar</button>
+                </div>
+            </div>
+        </div>
+    </mat-card>
+    <!-- FIN Sección de Filtros -->
+    <div *ngIf="totalResults!=null" class="col-6 text-left">
+        <br>
+        <p>{{totalResults}} registros encontrados </p>
+    </div>
+    <div class="row mt-4">
+        <div class="col-6">
+            <mat-form-field>
+                <mat-label>Buscar</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="Buscar">
+            </mat-form-field>
+        </div>
+
+        <div class="col-6 text-right">
+            <button mat-raised-button color="success" (click)="exportAsXLSX()">Exportar a Excel</button>
+        </div>
+
+        <div class="col-md-12">
+            <div class="mat-elevation-z8">
+                <div class="table-responsive">
+                    <table mat-table [dataSource]="dataSource" matSort>
+
+                        <!-- UN -->
+                        <ng-container matColumnDef="UN">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> UN </th>
+                            <td mat-cell *matCellDef="let row"> {{row.un}} </td>
+                        </ng-container>
+
+                        <!-- sector -->
+                        <ng-container matColumnDef="sector">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Sector </th>
+                            <td mat-cell *matCellDef="let row"> {{row.sector}} </td>
+                        </ng-container>
+
+                        <!-- CE -->
+                        <ng-container matColumnDef="CE">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> CE </th>
+                            <td mat-cell *matCellDef="let row"> {{row.ce}} </td>
+                        </ng-container>
+
+                        <!-- nombreCliente -->
+                        <ng-container matColumnDef="nombreCliente">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre Cliente </th>
+                            <td mat-cell *matCellDef="let row"> {{row.nombreCliente}} </td>
+                        </ng-container>
+
+                        <!-- Código de proyecto -->
+                        <ng-container matColumnDef="projectCode">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Código de Proyecto </th>
+                            <td mat-cell *matCellDef="let row"> {{row.projectCode}} </td>
+                        </ng-container>
+
+                        <!-- Nombre de proyecto -->
+                        <ng-container matColumnDef="nombreProyecto">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre de Proyecto </th>
+                            <td mat-cell *matCellDef="let row"> {{row.nombreProyecto}} </td>
+                        </ng-container>
+
+                        <!-- clienteManager -->
+                        <ng-container matColumnDef="clienteManager">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente Manager </th>
+                            <td mat-cell *matCellDef="let row"> {{row.clienteManager}} </td>
+                        </ng-container>
+
+                        <!-- gerenteProyecto -->
+                        <ng-container matColumnDef="gerenteProyecto">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Gerente Proyecto </th>
+                            <td mat-cell *matCellDef="let row"> {{row.gerenteProyecto}} </td>
+                        </ng-container>
+
+                        <!-- columna nueva que muestra icono de documento para aquellos proyectos que cuentan con un documento adjunto -->
+                        <!-- documPlanContingencia {{row.documPlanContingencia}}-->
+                        <ng-container matColumnDef="poseePlan">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Plan Contingencia </th>
+                            <td mat-cell *matCellDef="let row">
+                                <input *ngIf="row.poseePlan" ngModel="row.poseePlan" hidden />
+                                <img *ngIf="row.poseePlan" src="assets/img/adjuntarDoc.png" style="cursor: pointer"
+                                    (click)="downloadDocument(row)" class="ml-1" height="25px" width="25px">
+                                <span *ngIf="!row.poseePlan">Sin Plan</span>
+                            </td>
+                        </ng-container>
+
+                        <!-- Progress Column -->
+                        <ng-container matColumnDef="opt">
+                            <th mat-header-cell *matHeaderCellDef> Opciones </th>
+                            <td mat-cell *matCellDef="let row">
+                                <button [routerLink]="['../editPlanCont', row.projectCode]" mat-icon-button>
+                                    <i class="material-icons">description</i>
+                                </button>
+                                <button *hasPermission="['ADMINISTRADOR']; domain 'CONTINGENCIA'" mat-icon-button (click)="deletePlanCont(row)">
+                                    <i class="material-icons">delete</i>
+                                </button>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+                        </tr>
+                    </table>
+                </div>
+                <mat-paginator (page)="handlePaginatorEvent($event)" [pageSize]="paginatorSize"
+                    [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- ventana modal que muestra documento adjunto al proyecto al hacer click en icono de documento en lista de proyectos -->
+<ng-template #modaldoc let-c="close" let-d="dismiss">
+    <div class="modal-body">
+
+        <iframe src="documentoDecodificado" style="display: block;"></iframe>
+
+    </div>
+    <div class="modal-footer">
+        <div class="center-block centerbuttons">
+            <button type="button" class="btn btn-primary" (click)="c('Close click')">Aceptar</button>
+        </div>
+    </div>
+</ng-template>

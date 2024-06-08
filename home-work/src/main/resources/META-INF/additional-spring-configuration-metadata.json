@@ -1,0 +1,47 @@
+{"properties": [
+  {
+    "name": "smtp.server.url",
+    "type": "java.lang.String",
+    "description": "Servidor de correos SMTP"
+  },
+  {
+    "name": "smtp.server.auth.user",
+    "type": "java.lang.String",
+    "description": "Usuario acceso a Servidor SMTP"
+  },
+  {
+    "name": "smtp.server.auth.password",
+    "type": "java.lang.String",
+    "description": "Clave acceso a Servidor SMTP"
+  },
+  {
+    "name": "smtp.server.port",
+    "type": "java.lang.Integer",
+    "description": "Puerto de acceso a Servidor SMTP"
+  },
+  {
+    "name": "doubts.mail.production.inbox",
+    "type": "java.lang.String",
+    "description": "A description for 'doubts.mail.production.inbox'"
+  },
+  {
+    "name": "doubts.mail.production.subject",
+    "type": "java.lang.String",
+    "description": "A description for 'doubts.mail.production.subject'"
+  },
+  {
+    "name": "doubts.mail.production.template",
+    "type": "java.lang.String",
+    "description": "A description for 'doubts.mail.production.template'"
+  },
+  {
+    "name": "doubts.mail.user.subject",
+    "type": "java.lang.String",
+    "description": "A description for 'doubts.mail.user.subject'"
+  },
+  {
+    "name": "doubts.mail.user.template",
+    "type": "java.lang.String",
+    "description": "A description for 'doubts.mail.user.template'"
+  }
+]}

@@ -1,0 +1,39 @@
+.material-icons.color_red { color: red; }
+.material-icons.color_yellow { color: yellow; }
+.material-icons.color_green { color: green; }
+.material-icons.color_gray { color: gray; }
+.material-icons.info { color: #7CBFFF; font-size: 50px;}
+
+
+.detail-button.approve{background-color: #9bae04;color:white}
+
+.highlight-red{background-color:#FFC8C9;}
+.highlight-yellow{background-color:#FCFFD3;}
+
+.italic{font-style: italic;}
+
+.action-panel{ height: 40px;}
+
+.border-gray {    border-color: #6c757d7d !important; border-radius: 4px;padding: 5px 10px;margin-bottom: 10px;border-style:dotted !important;}
+
+
+table {
+    width: 100%;
+  }
+  
+.cdk-header-cell, .cdk-cell {
+    white-space: nowrap;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.margin-20{
+  margin: 20px 0px;
+}
+.margin-10{
+  margin: 10px; 
+}
+
+.disabled_highlight{
+  color: rgba(0,0,0,.87) !important;
+}

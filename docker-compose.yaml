@@ -1,0 +1,89 @@
+version: '3.3'
+
+services:
+  # ------------------------ COVID ---------------------------------------
+  # CL
+  angular-cl-app:
+    build: 
+      context: .
+      dockerfile: covid.Dockerfile
+    image: angular-cl-app:latest
+    container_name: angular-cl-app
+    restart: always
+    environment: 
+      API_URL: "${URL_API}:${PORT_MS_CL}"
+      LOCATION: "CL"
+    ports: 
+      - ${PORT_FRONT_CL}:80
+    # depends_on:
+    #   - ${PGSQL}
+    networks:
+      - covid
+    # volumes:
+    #   - ./config/nginx.conf:/etc/nginx/
+  # MX
+  angular-mx-app:
+    build: 
+      context: .
+      dockerfile: covid.Dockerfile
+    image: angular-mx-app:latest
+    container_name: angular-mx-app
+    restart: always
+    environment: 
+      API_URL: "${URL_API}:${PORT_MS_MX}"
+      LOCATION: "MX"
+    ports: 
+      - ${PORT_FRONT_MX}:80
+    # depends_on:
+    #   - ${PGSQL}
+    networks:
+      - covid
+    # volumes:
+    #   - ./config/nginx.conf:/etc/nginx/
+
+  # ------------------------ HOME WORK ---------------------------------------
+  # CL
+  java-cl-app:
+    build: 
+      context: .
+      dockerfile: home-work.Dockerfile
+    image: java-cl-app:latest
+    container_name: java-cl-app
+    restart: always
+    environment: 
+      USERNAME: ${USER_DB}
+      PASSWORD: ${PASS_DB}
+      DATABASE: ${DB_CL}
+      PORT: ${PORT_MS_CL}
+    ports: 
+      - ${PORT_MS_CL}:${PORT_MS_CL}
+    # depends_on:
+    #   - ${PGSQL}
+    networks:
+      - covid
+
+  # MX
+  java-mx-app:
+    build: 
+      context: .
+      dockerfile: home-work.Dockerfile
+    image: java-mx-app:latest
+    container_name: java-mx-app
+    restart: always
+    environment: 
+      USERNAME: ${USER_DB}
+      PASSWORD: ${PASS_DB}
+      DATABASE: ${DB_MX}
+      PORT: ${PORT_MS_MX}
+    ports: 
+      - ${PORT_MS_MX}:${PORT_MS_MX}
+    # depends_on:
+    #   - ${PGSQL}
+    networks:
+      - covid
+
+networks:
+  covid:
+
+# volumes:
+#   data:

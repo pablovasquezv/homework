@@ -1,0 +1,57 @@
+plugins {
+	id 'org.springframework.boot' version '2.2.5.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'com.everis'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+	developmentOnly
+	runtimeClasspath {
+		extendsFrom developmentOnly
+	}
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	
+	implementation 'org.apache.poi:poi:4.1.2'
+	implementation 'org.apache.poi:poi-ooxml:4.1.2'
+	implementation 'com.google.code.gson:gson:2.7'
+	
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-jwt:1.1.0.RELEASE'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.1'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.1'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.1'
+	
+	implementation 'org.keycloak:keycloak-spring-boot-starter:9.0.0'
+	implementation 'javax.mail:mail:1.5.0-b01'
+	compileOnly 'org.projectlombok:lombok'
+
+	// https://mvnrepository.com/artifact/com.github.dozermapper/dozer-core
+	implementation group: 'com.github.dozermapper', name: 'dozer-core', version: '6.5.0'
+
+
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+test {
+	useJUnitPlatform()
+}

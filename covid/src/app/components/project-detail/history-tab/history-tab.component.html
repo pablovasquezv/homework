@@ -1,0 +1,295 @@
+<div class="container">
+    <mat-expansion-panel class="mt-3 w-100">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Proyecto {{getProjectTypeText()}}
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="row" *ngIf="getProjectTypeText()==TRADITIONAL_TEXT">
+            <div class="col-md-6 col-sm-6 col-6">
+                <app-graphi-bar-chart class="w-100" [(data)]="data" [(labels)]="labels"></app-graphi-bar-chart>
+            </div>
+            <div class="col-md-6 col-sm-6 col-6" *ngIf="projectHistory!=null">
+                <table syle="border:1px">
+                    <tr>
+                        <td></td>
+                        <td class="title" colspan="6">Periodos</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="title" *ngFor="let row of iterator;let i=index">{{row}}</td>
+                        <td class="title">Actual</td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Avance real</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.actualPercentage  / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.actualPercentage  / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Avance planificado</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.plannedPercentage  / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.plannedPercentage  / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Desvío total</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.deviationPercentage / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.deviationPercentage / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" colspan="7">Hito 1</td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Avance real</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.actualProgressPercentageOne / 100 | percent:'1.0-3'}}
+                            </div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.actualProgressPercentageOne / 100 | percent:'1.0-3'}}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Avance planificado</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.compliancePercentageOne / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.compliancePercentageOne / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Desvío</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.deviationPercentageOne / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.deviationPercentageOne / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" colspan="7">Hito 2</td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Avance real</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.actualProgressPercentageTwo / 100 | percent:'1.0-3'}}
+                            </div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.actualProgressPercentageTwo / 100 | percent:'1.0-3'}}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Avance planificado</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.compliancePercentageTwo / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.compliancePercentageTwo / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Desvío</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.deviationPercentageTwo / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.deviationPercentageTwo / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" colspan="7">Hito 3</td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Avance real</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.actualProgressPercentageThree / 100 | percent:'1.0-3'}}
+                            </div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.actualProgressPercentageThree / 100 | percent:'1.0-3'}}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Avance planificado</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.compliancePercentageThree / 100 | percent:'1.0-3'}}
+                            </div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.compliancePercentageThree / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Desvío</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.deviationPercentageThree / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.deviationPercentageThree / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" colspan="7">Hito 4</td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Avance real</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.actualProgressPercentageFour / 100 | percent:'1.0-3'}}
+                            </div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.actualProgressPercentageFour / 100 | percent:'1.0-3'}}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Avance planificado</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.compliancePercentageFour / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.compliancePercentageFour / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Desvío</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.deviationPercentageFour / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.deviationPercentageFour / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" colspan="7">Hito 5</td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Avance real</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.actualProgressPercentageFive / 100 | percent:'1.0-3'}}
+                            </div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.actualProgressPercentageFive / 100 | percent:'1.0-3'}}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Avance planificado</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.compliancePercentageFive / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.compliancePercentageFive / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">% Desvío</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">
+                                {{projectHistory[i].traditional.deviationPercentageFive / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.traditional.deviationPercentageFive / 100 | percent:'1.0-3'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">Usuario</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">{{projectHistory[i].username}}</div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.modification.username}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">Fecha</td>
+                        <td *ngFor="let row of iterator;let i=index">
+                            <div *ngIf="projectHistory[i]!=null">{{projectHistory[i].lastModified | date:'dd/MM/yyyy'}}
+                            </div>
+                        </td>
+                        <td>
+                            <div>{{projectTracking.modification.lastModified | date:'dd/MM/yyyy'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">Semaforo</td>
+                        <td *ngFor="let row of iterator;let i=index"></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row" *ngIf="getProjectTypeText()==SERVICE_TEXT">
+            <div class="col-md-6 col-sm-6 col-6"> 
+                
+                <!--TODO incorporar grafico para servicios -->
+                    <app-graphi-bar-chart class="w-100" [(data)]="dataService" [(labels)]="labelsService"></app-graphi-bar-chart>
+               
+            </div>
+        </div>
+        <div class="row" *ngIf="getProjectTypeText()==AGILE_TEXT">
+            <div class="col-md-6 col-sm-6 col-6"> 
+                TODO incorporar grafico para AGILE
+                <!--TODO incorporar grafico para servicios
+                    <app-graphi-bar-chart class="w-100" [(data)]="dataAgil" [(labels)]="labelsAgil"></app-graphi-bar-chart>
+                -->
+            </div>
+        </div>
+        <div class="row" *ngIf="getProjectTypeText()==STAFF_TEXT">
+            <div class="col-md-6 col-sm-6 col-6"> 
+               
+                <!--TODO incorporar grafico para servicios-->
+                    <app-graphi-bar-chart class="w-100" [(data)]="dataStaff" [(labels)]="labelsStaff"></app-graphi-bar-chart>
+                
+            </div>
+        </div>
+    </mat-expansion-panel>
+
+    <!-- Inicio Indicadores técnicos-->
+    <mat-expansion-panel class="mt-3 w-100">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{graphiName}}
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="col-md-6 col-sm-6 col-6">
+            <!--Selector gráfico-->
+            <app-graphi-bar-chart class="w-100" [(data)]="dataTechn" [(labels)]="labelsTechn"></app-graphi-bar-chart>
+        </div>
+    </mat-expansion-panel>
+    <!-- Fin Indicadores técnicos-->
+</div>

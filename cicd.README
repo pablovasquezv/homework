@@ -1,0 +1,39 @@
+# CICD
+Documentación del proceso CICD
+
+- Se utiliza docker y docker-compose como herramientas de despliegue automático de contenedores
+- Usamos un Jenkinsfile en el repo, para que un job de Jenkins gatille el proceso
+- Todo usando las buenas prácticas
+
+### Docker
+Estos archivos están definidos los pasos para construir las imagenes en modo embedido, eso es porque tienen multi-stage.
+Donde en el mismo archivo esta una imagen para compilar el codigo y otra para desplegarlo
+
+- `covid.Dockerfile` Éste Dockerfile compila el codigo de la app de Angular en una imagen con el cliente y luego pasa el directorio "dist" a una imagen ngnix para el despliegue
+
+- `home-work.Dockerfile` Éste Dockerfile compila el codifgo del servicio de Java en una imagen con Gradle y luego pasa el "jar" de directorio target a una imagen de Java para el despliegue
+
+Definimos los archivos a ignorar en la contruccion de las imagenes para que sean ligeras. Es parecido a `.gitignore`
+ - `.dockerignore`
+
+### Docker-compose
+Orquestamos todo el proceso de build de las imagenes y corres los contenedores
+
+- Todo esto esta definido en el archivo `docker-compose.yaml`
+- En el archivo `.env` Donde están todas las variables que toma el archivo `docker-compose.yaml`
+
+##### Comandos
+- docker-compose build ( Construye las imagenes )
+- docker-compose up -d ( Arranca los contenedores y los coloca en modo background )
+- Los mismos están en el Jenkinsfile
+
+Nota: 
+- Se puede optimizar en un solo comando: `docker-compose up -d --build`
+
+##### Jenkinsfile
+- Jenkinsfile ( El pipeline que hace todo el proceso de despliegue )
+- rollback.Jenkinsfile ( El pipiline que hace rollback sí falla el despliegue **PENDIENTE** )
+
+
+##### ToDo
+- Hacer Pipeline rollback ( Depende de tagging de la version de la app )

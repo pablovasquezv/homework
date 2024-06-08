@@ -1,0 +1,10 @@
+<mat-form-field class="{{class}}">
+    <mat-label>{{label}}</mat-label>
+    <input type="text" placeholder="{{label}}" [(ngModel)]="value" matInput [formControl]="innerControl" [matAutocomplete]="auto">
+    <mat-icon matSuffix>arrow_drop_down</mat-icon>
+    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="selectEvent($event)">
+        <mat-option [value]="value" *ngFor="let value of filteredOptions | async">
+            {{value}}
+        </mat-option>
+    </mat-autocomplete>
+</mat-form-field>

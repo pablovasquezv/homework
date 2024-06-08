@@ -1,0 +1,39 @@
+@import '../../../styles.scss';
+
+.numeric-hint{
+    font-size: 10px;
+    text-align: right !important;
+    width: 100%;
+}
+
+.mat-form-field{
+    margin-bottom: 5px;
+}
+
+
+  /* position the unit to the right of the wrapper */
+  div::after {
+    position: absolute;
+    top: 16px;
+    right: 2.3em;
+    transition: all .05s ease-in-out;
+  }
+  
+  /* move unit more to the left on hover or focus within
+     for arrow buttons will appear to the right of number inputs */
+  /*div:hover::after,
+  div:focus-within::after {
+    right: 5em;
+  }*/
+  
+  /* handle Firefox (arrows always shown) */
+  @supports (-moz-appearance:none) {
+    div::after {
+      right: 1.5em;
+    }
+  }
+
+.percent::after {
+    content: '%';
+  }
+

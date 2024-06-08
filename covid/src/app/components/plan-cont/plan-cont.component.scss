@@ -1,0 +1,51 @@
+@import '../../../styles.scss';
+
+table {
+    width: 100%;
+  }
+  
+.cdk-header-cell, .cdk-cell {
+    white-space: nowrap;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+td.mat-column-empleado {
+  min-width: 90px;
+}
+
+td.mat-column-opt {
+  i {
+    color: $blue;
+    &:hover {
+      opacity: .8;
+      cursor: pointer;
+    }
+  }
+}
+
+.mat-button.mat-success,
+.mat-stroked-button.mat-success {
+    color: #155724;
+}
+.mat-button.mat-success:hover,
+.mat-stroked-button.mat-success:hover {
+  background-color: #f0fff3;
+}
+
+.mat-raised-button.mat-success,
+.mat-flat-button.mat-success,
+.mat-fab.mat-success,
+.mat-mini-fab.mat-success {
+  color: #f0fff3;
+  background-color: #155724;
+}
+
+.mat-icon-button.mat-success {
+  color:#155724;
+}

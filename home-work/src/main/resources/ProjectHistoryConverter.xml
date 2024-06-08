@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings
+	xmlns="http://dozermapper.github.io/schema/bean-mapping"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping http://dozermapper.github.io/schema/bean-mapping.xsd">
+	<configuration>
+		<stop-on-errors>true</stop-on-errors>
+		<date-format>MM/dd/yyyy HH:mm</date-format>
+		<wildcard>true</wildcard>
+		<custom-converters>
+			<converter
+				type="com.everis.homework.helper.HistoryToVisual">
+				<class-a>java.lang.String</class-a>
+				<class-b>com.everis.homework.mapper.TraditionalFields</class-b>
+			</converter>
+			<converter
+				type="com.everis.homework.helper.HistoryToVisual">
+				<class-a>java.lang.String</class-a>
+				<class-b>com.everis.homework.mapper.TechnicalFields</class-b>
+			</converter>
+			<converter
+				type="com.everis.homework.helper.HistoryToVisual">
+				<class-a>java.lang.String</class-a>
+				<class-b>com.everis.homework.mapper.StaffFields</class-b>
+			</converter>
+			<converter
+				type="com.everis.homework.helper.HistoryToVisual">
+				<class-a>java.lang.String</class-a>
+				<class-b>com.everis.homework.mapper.ServiceFields</class-b>
+			</converter>
+		</custom-converters>
+	</configuration>
+	<mapping>
+		<class-a>com.everis.homework.mapper.ProjectHistory</class-a>
+		<class-b>com.everis.homework.dto.VisualProjectHistory</class-b>
+		<!-- Any custom field mapping xml would go here -->
+	</mapping>
+</mappings>

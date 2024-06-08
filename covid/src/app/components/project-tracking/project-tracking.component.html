@@ -1,0 +1,199 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">Seguimiento de proyectos</li>
+  </ol>
+</nav>
+
+<div class="container-fluid">
+  <div *ngIf="isAdminProfile()" class="row mt-3">
+    <div class="col-md-12 text-right">
+      <button mat-raised-button color="primary" (click)="upload()" class="ml-2">Carga masiva</button>
+      <input type="file" #fileUpload id="fileUpload" name="fileUpload" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none;" />
+    </div><br>
+    <div class="col-md-12 text-right">
+      <a href="assets/template/Seguimiento-Proyectos_Template.xlsx" target="_blank">Descargar Template</a>
+  </div>
+  </div>
+  <h2>Filtros</h2>
+  <mat-card>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-2 col-md-4">
+          <app-find-complete [cleanAction]="filterClean" (found)="filterProjectTracking.sector=$event"  [value]="filterProjectTracking.sector" [class]="'w-100'" [label]="'Sector'" [(options)]="sectorList">
+          </app-find-complete>
+        </div>
+        <div class="col-lg-2 col-md-4">
+          <app-find-complete [cleanAction]="filterClean" (found)="filterProjectTracking.un=$event" [value]="filterProjectTracking.un" [class]="'w-100'" [label]="'UN'" [(options)]="unList"></app-find-complete>
+        </div>
+        <div class="col-lg-2 col-md-4">
+          <app-find-complete [cleanAction]="filterClean" (found)="filterProjectTracking.ce=$event" [value]="filterProjectTracking.ce" [class]="'w-100'" [label]="'CE'" [(options)]="ceList"></app-find-complete>
+        </div>
+        <div class="col-lg-4 col-md-4">
+          <app-find-complete [cleanAction]="filterClean" (found)="filterProjectTracking.client=$event" [value]="filterProjectTracking.client" [class]="'w-100'" [label]="'Cliente'" [(options)]="clientList">
+          </app-find-complete>
+        </div>
+        <div class="col-lg-2 col-md-4">
+          <app-find-complete [cleanAction]="filterClean" (found)="filterProjectTracking.serviceLine=$event" [value]="filterProjectTracking.serviceLine" [class]="'w-100'" [label]="'Línea servicio'"
+            [(options)]="serviceLineList"></app-find-complete>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 col-md-4">
+          <app-find-complete [cleanAction]="filterClean" (found)="filterProjectTracking.projectManager=$event" [value]="filterProjectTracking.projectManager" [class]="'w-100'" [label]="'Gerente de proyecto'"
+            [(options)]="projectManagerList"></app-find-complete>
+        </div>
+        <div class="col-lg-2 col-md-4">
+          <app-find-complete [cleanAction]="filterClean" (found)="filterProjectTracking.projectCode=$event" [value]="filterProjectTracking.projectCode" [class]="'w-180'" [label]="'Código de proyecto'"
+            [(options)]="projectCodeList"></app-find-complete>
+        </div>
+        <div class="col-lg-2 col-md-4">
+          <app-find-complete [cleanAction]="filterClean" (found)="filterProjectTracking.projectName=$event" [value]="filterProjectTracking.projectName" [class]="'w-180'" [label]="'Nombre de proyecto'"
+            [(options)]="projectNameList"></app-find-complete>
+        </div>
+        <div class="col-lg-2 col-md-4">
+          <app-find-complete [cleanAction]="filterClean" (found)="filterProjectTracking.projectType=$event" [value]="filterProjectTracking.projectType" [class]="'w-100'" [label]="'Tipología'"
+            [(options)]="projectTypeList"></app-find-complete>
+        </div>
+        <div class="col-lg-2 col-md-4 text-right">
+          <button mat-raised-button color="primary" class="mr-2" (click)="limpiar()">Limpiar</button>
+          <button mat-raised-button color="primary" type="submit" (click)="searchByFilters()">Filtrar</button>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+  <div>
+    <div *ngIf="totalResults!=null" class="col-6 text-left">
+      <br>
+      <p>{{totalResults}} registro(s) encontrado(s) </p>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-6">
+      <mat-form-field>
+        <mat-label>Buscar</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar">
+      </mat-form-field>
+    </div>
+    <div class="col-6 text-right">
+      <button mat-raised-button color="success" (click)="exportAsXLSX()">Exportar a excel</button>
+    </div>
+    <div class="col-md-12">
+      <div class="mat-elevation-z8">
+        <div class="table-responsive">
+          <table mat-table [dataSource]="dataSource" matSort matSortActive="alarm" matSortDirection="asc">
+
+            <!-- Alerta -->
+            <ng-container matColumnDef="alarm">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Alerta </th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row">
+                <i *ngIf="row.alarm.level" [ngClass]="getAlarmClass(row.alarm.level)" matTooltip="{{row.alarm.description}}">brightness_1</i>
+              </td>
+            </ng-container>
+
+            <!-- Sector -->
+            <ng-container matColumnDef="sector">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Sector </th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row"> {{row.sector}} </td>
+            </ng-container>
+
+            <!-- UN -->
+            <ng-container matColumnDef="un">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> UN </th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row"> {{row.un}}</td>
+            </ng-container>
+
+            <!-- CE -->
+            <ng-container matColumnDef="ce">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> CE </th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row"> {{row.ce}} </td>
+            </ng-container>
+
+            <!-- Cliente -->
+            <ng-container matColumnDef="client">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Cliente </th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row"> {{row.client}} </td>
+            </ng-container>
+
+            <!-- Línea de Servicio -->
+            <ng-container matColumnDef="serviceLine">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Línea de servicio </th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row"> {{row.serviceLine}} </td>
+            </ng-container>
+
+            <!-- Gerente de proyecto -->
+            <ng-container matColumnDef="projectManager">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Gerente de proyecto </th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row"> {{row.projectManager}} </td>
+            </ng-container>
+
+            <!-- Codigo de proyecto -->
+            <ng-container matColumnDef="projectCode">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Código de proyecto </th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row"> {{row.projectCode}} </td>
+            </ng-container>
+
+             <!-- Nombre de proyecto -->
+             <ng-container matColumnDef="projectName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre del proyecto </th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row"> {{row.projectName}} </td>
+            </ng-container>
+
+            <!-- Tipologia -->
+            <ng-container matColumnDef="projectType">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipología </th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row"> {{row.projectType}} </td>
+            </ng-container>
+
+            <!-- Fecha de inicio 
+            <ng-container matColumnDef="startDate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha inicio </th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row"> {{row.startDate | date:'dd/MM/yyyy'}} </td>
+            </ng-container>-->
+
+            <!-- Fecha de fin
+            <ng-container matColumnDef="endDate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha fin </th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row"> {{row.endDate | date:'dd/MM/yyyy'}} </td>
+            </ng-container> -->
+
+            <!-- Fecha Real fin de proyecto--> 
+            <ng-container matColumnDef="realEndDate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha fin real</th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row"> {{row.realEndDate | date:'dd/MM/yyyy'}} </td>
+            </ng-container>
+  
+            <!-- Fecha Real fin de proyecto--> 
+            <ng-container matColumnDef="lastModified">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Ultima actualización</th>
+              <td  [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row"> 
+                <div *ngIf="row.modification==null">Sin actualizar </div>
+                <div *ngIf="row.modification!=null">{{row.modification.lastModified | date:'dd/MM/yyyy'}}</div>
+              </td>
+            </ng-container>
+  
+
+            <!-- Progress Column -->
+            <ng-container matColumnDef="opt">
+              <th mat-header-cell *matHeaderCellDef> Opciones </th>
+              <td [ngClass]="highlightRow(row)" mat-cell *matCellDef="let row">
+                <button *ngIf="allowDelete()" mat-icon-button (click)="deleteProjectTracking(row)">
+                 <i class="material-icons">delete</i></button>
+                <button [routerLink]="['../editProject', row.projectCode]" mat-icon-button>
+                  <i class="material-icons">description</i> </button>
+                <button mat-icon-button (click)="prepareDoubt(row.projectCode)">
+                  <i class="material-icons">contact_support</i></button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+            </tr>
+          </table>
+        </div>
+        <mat-paginator (page)="handlePaginatorEvent($event)" [pageSize]="paginatorSize"
+          [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>

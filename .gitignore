@@ -1,0 +1,6 @@
+*.mark
+*.class
+covid/dist/*
+.gradle/*
+.settings/*
+*/.metadata/*

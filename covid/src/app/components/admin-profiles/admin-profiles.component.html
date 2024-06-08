@@ -1,0 +1,70 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">Administración de Perfiles</li>
+  </ol>
+</nav>
+
+<div class="container-fluid">
+  <div class="row mt-3">
+    <div class="col-md-12 text-right">
+      <button mat-raised-button color="primary" class="ml-2" [routerLink]="['../admin-profile-add']">Nuevo
+        Perfil</button>
+    </div><br>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-6">
+      <mat-form-field>
+        <mat-label>Buscar</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar">
+      </mat-form-field>
+    </div>
+    <div class="col-md-12">
+      <div class="mat-elevation-z8">
+        <div class="table-responsive">
+          <table mat-table [dataSource]="dataSource" matSort matSortDirection="asc">
+
+            <!-- User -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Usuario </th>
+              <td mat-cell *matCellDef="let profiles">{{profiles.user}}</td>
+            </ng-container>
+
+            <!-- Domain -->
+            <ng-container matColumnDef="domain">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Dominio </th>
+              <td mat-cell *matCellDef="let profiles">{{profiles.domain}}</td>
+            </ng-container>
+
+            <!-- Domain -->
+            <ng-container matColumnDef="rol">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Rol </th>
+              <td mat-cell *matCellDef="let profiles">{{profiles.name}}</td>
+            </ng-container>
+
+            <!-- Progress Column -->
+            <ng-container matColumnDef="opt">
+              <th mat-header-cell *matHeaderCellDef> Opciones </th>
+              <td mat-cell *matCellDef="let profiles">
+                <button [routerLink]="['../admin-profile-edit', profiles.user]" mat-icon-button>
+                  <i class="material-icons">description</i> </button>
+                  <button  mat-icon-button (click)="deleteUser(profiles)">
+                    <i class="material-icons">delete</i></button>
+              </td>
+            </ng-container>
+
+
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+            </tr>
+          </table>
+        </div>
+        <mat-paginator (page)="handlePaginatorEvent($event)" [pageSize]="paginatorSize"
+          [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+      </div>
+    </div>
+  </div>
+
+
+</div>
